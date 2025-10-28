@@ -1,0 +1,5 @@
+{
+  "name": "School Management System v.0.1",
+  "description": "A comprehensive school management application with role-based access for parents, students, teachers, and administrators. Features include login, registration, role selection, and a persistent light/dark theme.",
+  "requestFramePermissions": []
+}
