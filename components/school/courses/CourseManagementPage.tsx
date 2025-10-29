@@ -4,7 +4,7 @@ import { Subject } from '../../../types';
 import { ArrowUturnLeftIcon, BookOpenIcon, PlusIcon, MagnifyingGlassIcon, EllipsisVerticalIcon, PencilIcon, TrashIcon } from '../../Icons';
 import { AddEditCourseModal } from './AddEditCourseModal';
 
-const initialCourses: Course[] = [
+export const initialCourses: Course[] = [
   // Grade 1
   { id: 'C011', courseName: 'English', courseCode: 'ENG-011', gradeLevel: '1st Grade', subject: Subject.English, description: 'Introduces basic phonics, reading, and writing skills for first graders.' },
   { id: 'C012', courseName: 'English Composition', courseCode: 'ENG-012', gradeLevel: '1st Grade', subject: Subject.English, description: 'Focuses on forming simple sentences and basic storytelling.' },

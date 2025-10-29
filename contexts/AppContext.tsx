@@ -39,6 +39,7 @@ interface AuthContextType {
   ) => Promise<string | null>;
   logout: () => Promise<void>;
   loginWithGoogle: () => Promise<string | null>;
+  resetPassword: (email: string) => Promise<{ message: string; error: boolean }>;
   loading: boolean;
   initialLoading: boolean;
 }
@@ -182,6 +183,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(null);
   }, []);
 
+  const resetPassword = useCallback(async (email: string) => {
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin, // Redirect URL after password reset
+    });
+    setLoading(false);
+    if (error) {
+      console.error('Password Reset Error:', error.message);
+      return { message: error.message, error: true };
+    }
+    return { message: 'Password reset instructions have been sent to your email.', error: false };
+  }, []);
+
   const authValue = useMemo(
     () => ({
       user,
@@ -189,10 +203,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       register,
       logout,
       loginWithGoogle,
+      resetPassword,
       loading,
       initialLoading,
     }),
-    [user, loading, initialLoading, login, register, logout, loginWithGoogle],
+    [user, loading, initialLoading, login, register, logout, loginWithGoogle, resetPassword],
   );
 
   return (

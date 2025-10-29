@@ -28,9 +28,17 @@ const getStatus = (dueDate: string) => {
     return { text: 'Assigned', className: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' };
 };
 
+const normalizeGrade = (grade: string): string => {
+    const gradeString = String(grade).toLowerCase();
+    const numberMatch = gradeString.match(/\d+/);
+    return numberMatch ? numberMatch[0] : gradeString;
+};
+
+
 export const StudentAssignmentsPage: React.FC<{ student: Student }> = ({ student }) => {
+    const studentGrade = normalizeGrade(student.academic_info.grade);
     const studentAssignments = initialHomeworks
-        .filter(hw => hw.gradeLevel === student.academic_info.grade)
+        .filter(hw => normalizeGrade(hw.gradeLevel) === studentGrade)
         .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
     return (

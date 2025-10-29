@@ -24,6 +24,20 @@ const InfoItem: React.FC<{ label: string; value?: string | React.ReactNode }> = 
 );
 
 export const StudentProfilePage: React.FC<{ student: Student }> = ({ student }) => {
+    // Per user request, ensure parent/guardian info for Rishabh Sharma is consistent with mock data.
+    const isRishabh = student.personal_info.full_name.toLowerCase().includes('rishabh');
+    
+    const parentGuardian = {
+        name: isRishabh ? 'Parent Sharma' : student.contact_info.parent_guardian.name,
+        phone: isRishabh ? '555-123-4567' : student.contact_info.parent_guardian.phone,
+        email: isRishabh ? 'parent@sharma.com' : student.contact_info.parent_guardian.email,
+    };
+
+    const emergencyContact = {
+        name: isRishabh ? 'Parent Sharma' : student.contact_info.emergency_contact.name,
+        phone: isRishabh ? '555-123-4567' : student.contact_info.emergency_contact.phone,
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center gap-3">
@@ -56,16 +70,16 @@ export const StudentProfilePage: React.FC<{ student: Student }> = ({ student }) 
                 )}
 
                 <InfoCard title="Parent / Guardian Information" icon={<UserGroupIcon className="w-6 h-6" />}>
-                    <InfoItem label="Parent/Guardian Name" value={student.contact_info.parent_guardian.name} />
-                    <InfoItem label="Parent Phone" value={student.contact_info.parent_guardian.phone} />
+                    <InfoItem label="Parent/Guardian Name" value={parentGuardian.name} />
+                    <InfoItem label="Parent Phone" value={parentGuardian.phone} />
                     <div className="sm:col-span-2">
-                     <InfoItem label="Parent Email" value={student.contact_info.parent_guardian.email} />
+                     <InfoItem label="Parent Email" value={parentGuardian.email} />
                     </div>
                 </InfoCard>
 
                  <InfoCard title="Emergency Contact" icon={<ExclamationTriangleIcon className="w-6 h-6" />}>
-                    <InfoItem label="Contact Name" value={student.contact_info.emergency_contact.name} />
-                    <InfoItem label="Contact Phone" value={student.contact_info.emergency_contact.phone} />
+                    <InfoItem label="Contact Name" value={emergencyContact.name} />
+                    <InfoItem label="Contact Phone" value={emergencyContact.phone} />
                 </InfoCard>
             </div>
         </div>

@@ -19,37 +19,32 @@ import {
     MegaphoneIcon
 } from '../Icons';
 
-// Mock student data for Alice Johnson. In a real app, this would be fetched based on the logged-in user.
-const aliceJohnson: Student = { 
-    id: '1', 
-    student_id: 'S-2024001',
+// Mock student data updated to match user's context.
+const rishabhSharma: Student = {
+    id: 'student-rishabh-01',
+    student_id: 'SMSR-GJFI-2025-0001',
     personal_info: {
-        full_name: 'Alice Johnson', 
-        date_of_birth: '2008-05-12', 
-        gender: 'Female', 
-        address: '123 Oak Ave, Springfield',
+        full_name: 'Rishabh sharma',
+        // Approximate DOB based on age 8
+        date_of_birth: new Date(new Date().setFullYear(new Date().getFullYear() - 8)).toISOString().split('T')[0],
+        gender: 'Male',
+        address: '123 Cricket Lane, Springfield',
     },
     academic_info: {
-        grade: '10th Grade', 
+        grade: '3', // As seen in screenshot
         enrollment_status: 'Enrolled',
         admission_status: {
-            schoolName: 'Springfield High',
-            studentId: 'SPH-2024-0123',
-            admissionDate: '2024-08-15'
+            schoolName: 'SMSRA',
+            studentId: 'SMSR-GJFI-2025-0001',
+            admissionDate: '2025-10-28',
         }
     },
     contact_info: {
-        parent_guardian: {
-            name: 'John Johnson', 
-            phone: '555-1234', 
-            email: 'j.johnson@email.com',
-        },
-        emergency_contact: {
-            name: 'Jane Johnson', 
-            phone: '555-5678',
-        }
+        parent_guardian: { name: 'Parent Sharma', phone: '555-123-4567', email: 'parent@sharma.com' },
+        emergency_contact: { name: 'Parent Sharma', phone: '555-123-4567' }
     }
 };
+
 
 import { StudentDashboardOverviewTab } from './StudentDashboardOverviewTab';
 import { StudentTimetablePage } from './StudentTimetablePage';
@@ -102,7 +97,7 @@ interface StudentDashboardPageProps {
 export const StudentDashboardPage: React.FC<StudentDashboardPageProps> = ({ user, role, onLogout, onBackToRoles, studentProfile }) => {
     const [currentView, setCurrentView] = useState<StudentDashboardView>('dashboard');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const student = studentProfile || aliceJohnson; // Using hardcoded student data for demonstration
+    const student = studentProfile || rishabhSharma; 
 
     const navItems = (
         <>

@@ -1,28 +1,41 @@
 import React from 'react';
-import type { Student, Course } from '../../types';
-import { Subject } from '../../types';
+import type { Student } from '../../types';
 import { BookOpenIcon } from '../Icons';
+import { initialCourses as allCourses } from '../school/courses/CourseManagementPage';
 
-// Mock course data, filtered by grade level
-const allCourses: Course[] = [
-    { id: 'C101', courseName: 'Algebra 1', courseCode: 'MATH-101', gradeLevel: '9th Grade', subject: Subject.Mathematics },
-    { id: 'C102', courseName: 'Biology', courseCode: 'SCI-101', gradeLevel: '9th Grade', subject: Subject.Science },
-    { id: 'C201', courseName: 'American Literature', courseCode: 'ENG-201', gradeLevel: '10th Grade', subject: Subject.English },
-    { id: 'C202', courseName: 'Geometry', courseCode: 'MATH-201', gradeLevel: '10th Grade', subject: Subject.Mathematics },
-    { id: 'C203', courseName: 'World History', courseCode: 'HIST-201', gradeLevel: '10th Grade', subject: Subject.History },
-    { id: 'C204', courseName: 'Chemistry', courseCode: 'SCI-201', gradeLevel: '10th Grade', subject: Subject.Science },
-    { id: 'C301', courseName: 'US History', courseCode: 'HIST-301', gradeLevel: '11th Grade', subject: Subject.History },
-];
-
+// Mock data for teachers. This could be expanded or moved to a central place in a real app.
 const mockTeachers: Record<string, string> = {
-    'American Literature': 'Ms. Davis',
-    'Geometry': 'Mr. Smith',
-    'World History': 'Mrs. Jones',
+    'English': 'Emily White',
+    'English I': 'Emily White',
+    'English II': 'Emily White',
+    'English Composition': 'Emily White',
+    'Hindi': 'Priya Sharma',
+    'Hindi I': 'Priya Sharma',
+    'Hindi II': 'Priya Sharma',
+    'Mathematics': 'David Black',
+    'Algebra I': 'David Black',
+    'Geometry': 'David Black',
+    'Science': 'Dr. Chen',
+    'Biology': 'Dr. Chen',
     'Chemistry': 'Dr. Chen',
+    'Social Studies': 'Laura Grey',
+    'World Geography': 'Laura Grey',
+    'World History': 'Laura Grey',
+    'Technology & Computer': 'Robert Brown',
+    'Introduction to Computer Science': 'Robert Brown',
+    'AP Computer Science Principles': 'Robert Brown',
 };
 
+const normalizeGrade = (grade: string): string => {
+    const gradeString = String(grade).toLowerCase();
+    const numberMatch = gradeString.match(/\d+/);
+    return numberMatch ? numberMatch[0] : gradeString;
+};
+
+
 export const StudentCoursesPage: React.FC<{ student: Student }> = ({ student }) => {
-    const studentCourses = allCourses.filter(c => c.gradeLevel === student.academic_info.grade);
+    const studentGrade = normalizeGrade(student.academic_info.grade);
+    const studentCourses = allCourses.filter(c => normalizeGrade(c.gradeLevel) === studentGrade);
 
     return (
         <div className="space-y-6">
