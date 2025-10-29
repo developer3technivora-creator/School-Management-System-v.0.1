@@ -36,7 +36,6 @@ export const MarkAttendanceModal: React.FC<MarkAttendanceModalProps> = ({ isOpen
         const initialStatuses: StatusMap = {};
         students.forEach(student => {
             const existing = existingRecords.find(r => r.studentId === student.id);
-            // FIX: Use optional chaining to safely access properties on `existing` which may be undefined, resolving the "property does not exist on type 'unknown'" error.
             initialStatuses[student.id] = {
                 status: existing?.status || 'Present',
                 notes: existing?.notes || '',
@@ -105,9 +104,7 @@ export const MarkAttendanceModal: React.FC<MarkAttendanceModalProps> = ({ isOpen
                                 <div className="flex items-center gap-3 col-span-1">
                                     <UserCircleIcon className="w-10 h-10 text-slate-400" />
                                     <div>
-                                        {/* FIX: Changed property access from 'fullName' to 'full_name'. */}
-                                        <p className="font-semibold text-slate-800 dark:text-slate-100">{student.full_name}</p>
-                                        {/* FIX: Changed property access from 'studentId' to 'student_id'. */}
+                                        <p className="font-semibold text-slate-800 dark:text-slate-100">{student.personal_info.full_name}</p>
                                         <p className="text-sm text-slate-500 dark:text-slate-400">{student.student_id}</p>
                                     </div>
                                 </div>

@@ -118,13 +118,13 @@ export const StudentDetailPage: React.FC<{ student: Student; onBack: () => void 
                     <UserCircleIcon className="w-24 h-24 text-slate-400" />
                     <div>
                         {/* FIX: Changed property access from 'fullName' to 'full_name'. */}
-                        <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{student.full_name}</h2>
+                        <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{student.personal_info.full_name}</h2>
                         {/* FIX: Changed property access from 'studentId' to 'student_id'. */}
-                        <p className="text-slate-500 dark:text-slate-400">{student.student_id} | {student.grade}</p>
+                        <p className="text-slate-500 dark:text-slate-400">{student.student_id} | {student.academic_info.grade}</p>
                         {/* FIX: Changed property access from 'enrollmentStatus' to 'enrollment_status'. */}
-                        <span className={`mt-2 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${student.enrollment_status === 'Enrolled' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : 'bg-slate-100 text-slate-800'}`}>
+                        <span className={`mt-2 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${student.academic_info.enrollment_status === 'Enrolled' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300' : 'bg-slate-100 text-slate-800'}`}>
                             {/* FIX: Changed property access from 'enrollmentStatus' to 'enrollment_status'. */}
-                            {student.enrollment_status}
+                            {student.academic_info.enrollment_status}
                         </span>
                     </div>
                 </div>
@@ -133,18 +133,18 @@ export const StudentDetailPage: React.FC<{ student: Student; onBack: () => void 
                     {/* Personal & Contact Info */}
                     <InfoCard title="Personal & Contact Information" icon={<IdentificationIcon className="w-6 h-6" />}>
                         {/* FIX: Changed property access from camelCase to snake_case. */}
-                        <InfoItem label="Full Name" value={student.full_name} />
+                        <InfoItem label="Full Name" value={student.personal_info.full_name} />
                         <InfoItem label="Student ID" value={student.student_id} />
-                        <InfoItem label="Date of Birth" value={student.date_of_birth} />
-                        <InfoItem label="Gender" value={student.gender} />
-                        <InfoItem label="Address" value={student.address} />
+                        <InfoItem label="Date of Birth" value={student.personal_info.date_of_birth} />
+                        <InfoItem label="Gender" value={student.personal_info.gender} />
+                        <InfoItem label="Address" value={student.personal_info.address} />
                         <div className="sm:col-span-2 border-t border-slate-200 dark:border-slate-700 my-2"></div>
-                        <InfoItem label="Parent/Guardian" value={student.parent_guardian_name} />
-                        <InfoItem label="Parent Phone" value={student.parent_guardian_phone} />
-                        <InfoItem label="Parent Email" value={student.parent_guardian_email} />
+                        <InfoItem label="Parent/Guardian" value={student.contact_info.parent_guardian.name} />
+                        <InfoItem label="Parent Phone" value={student.contact_info.parent_guardian.phone} />
+                        <InfoItem label="Parent Email" value={student.contact_info.parent_guardian.email} />
                         <div className="sm:col-span-2 border-t border-slate-200 dark:border-slate-700 my-2"></div>
                         {/* FIX: Changed property access from camelCase to snake_case. */}
-                        <InfoItem label="Emergency Contact" value={`${student.emergency_contact_name} (${student.emergency_contact_phone})`} />
+                        <InfoItem label="Emergency Contact" value={`${student.contact_info.emergency_contact.name} (${student.contact_info.emergency_contact.phone})`} />
                     </InfoCard>
 
                     {/* Health Records */}

@@ -22,7 +22,7 @@ export const StudentTimetablePage: React.FC<{ student: Student }> = ({ student }
                 <ClockIcon className="w-8 h-8 text-blue-500" />
                 <div>
                     <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200">My Timetable</h2>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Your weekly class schedule for {student.grade}.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Your weekly class schedule for {student.academic_info.grade}.</p>
                 </div>
             </div>
             

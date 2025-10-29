@@ -78,8 +78,7 @@ export const HealthRecordsModal: React.FC<{ isOpen: boolean; onClose: () => void
                                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
                                     Health Information
                                 </h3>
-                                {/* FIX: Changed property access from 'fullName' to 'full_name'. */}
-                                <p className="text-sm text-slate-500 dark:text-slate-400">{student.full_name}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400">{student.personal_info.full_name}</p>
                             </div>
                         </div>
                         <button type="button" onClick={onClose} className="text-slate-400 bg-transparent hover:bg-slate-200 hover:text-slate-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-slate-600 dark:hover:text-white">

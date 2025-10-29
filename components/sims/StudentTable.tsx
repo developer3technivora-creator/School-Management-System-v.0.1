@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import type { Student } from '../../types';
 import { PencilIcon, TrashIcon, UserCircleIcon, ChevronUpIcon, ChevronDownIcon, AcademicCapIcon, HeartIcon, EyeIcon } from '../Icons';
 
-type SortKey = keyof Student;
+// FIX: Create a specific SortKey type for sortable columns instead of using keyof Student.
+type SortKey = 'full_name' | 'student_id' | 'grade' | 'enrollment_status';
 type SortDirection = 'asc' | 'desc';
 
 // FIX: Changed initial sort key from 'fullName' to 'full_name'.
@@ -12,10 +13,24 @@ const useSortableData = (items: Student[], initialSortKey: SortKey = 'full_name'
     const sortedItems = useMemo(() => {
         let sortableItems = [...items];
         sortableItems.sort((a, b) => {
-            if (a[sortConfig.key] < b[sortConfig.key]) {
+            // FIX: Add a helper to get values from nested properties for sorting.
+            const getSortableValue = (student: Student, key: SortKey): string => {
+                switch(key) {
+                    case 'full_name': return student.personal_info.full_name;
+                    case 'student_id': return student.student_id;
+                    case 'grade': return student.academic_info.grade;
+                    case 'enrollment_status': return student.academic_info.enrollment_status;
+                    default: return '';
+                }
+            }
+
+            const valA = getSortableValue(a, sortConfig.key);
+            const valB = getSortableValue(b, sortConfig.key);
+            
+            if (valA < valB) {
                 return sortConfig.direction === 'asc' ? -1 : 1;
             }
-            if (a[sortConfig.key] > b[sortConfig.key]) {
+            if (valA > valB) {
                 return sortConfig.direction === 'asc' ? 1 : -1;
             }
             return 0;
@@ -36,7 +51,7 @@ const useSortableData = (items: Student[], initialSortKey: SortKey = 'full_name'
 
 
 // FIX: Changed property access from 'enrollmentStatus' to 'enrollment_status'.
-const getStatusClass = (status: Student['enrollment_status']) => {
+const getStatusClass = (status: Student['academic_info']['enrollment_status']) => {
     switch (status) {
         case 'Enrolled':
             return 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
@@ -98,25 +113,25 @@ export const StudentTable: React.FC<{ students: Student[]; onEdit: (student: Stu
                                 {/* FIX: Changed property access from 'photoUrl' to 'photo_url'. */}
                                 {student.photo_url ? (
                                     // FIX: Changed property access from 'photoUrl' and 'fullName' to 'photo_url' and 'full_name'.
-                                    <img className="w-10 h-10 rounded-full" src={student.photo_url} alt={`${student.full_name} profile`} />
+                                    <img className="w-10 h-10 rounded-full" src={student.photo_url} alt={`${student.personal_info.full_name} profile`} />
                                 ) : (
                                     <UserCircleIcon className="w-10 h-10 text-slate-400" />
                                 )}
                                 <div className="pl-3">
                                     {/* FIX: Changed property access from 'fullName' to 'full_name'. */}
-                                    <div className="text-base font-semibold">{student.full_name}</div>
+                                    <div className="text-base font-semibold">{student.personal_info.full_name}</div>
                                     {/* FIX: Changed property access from 'parentGuardianEmail' to 'parent_guardian_email'. */}
-                                    <div className="font-normal text-slate-500">{student.parent_guardian_email}</div>
+                                    <div className="font-normal text-slate-500">{student.contact_info.parent_guardian.email}</div>
                                 </div>
                             </th>
                             {/* FIX: Changed property access from 'studentId' to 'student_id'. */}
                             <td className="px-6 py-4">{student.student_id}</td>
-                            <td className="px-6 py-4">{student.grade}</td>
+                            <td className="px-6 py-4">{student.academic_info.grade}</td>
                             <td className="px-6 py-4">
                                 {/* FIX: Changed property access from 'enrollmentStatus' to 'enrollment_status'. */}
-                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClass(student.enrollment_status)}`}>
+                                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClass(student.academic_info.enrollment_status)}`}>
                                     {/* FIX: Changed property access from 'enrollmentStatus' to 'enrollment_status'. */}
-                                    {student.enrollment_status}
+                                    {student.academic_info.enrollment_status}
                                 </span>
                             </td>
                             <td className="px-6 py-4">

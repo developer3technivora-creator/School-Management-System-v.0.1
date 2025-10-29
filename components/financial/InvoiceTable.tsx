@@ -51,8 +51,7 @@ export const InvoiceTable: React.FC<{
     const combinedInvoices: CombinedInvoice[] = useMemo(() => 
         invoices.map(inv => ({
             ...inv,
-            // FIX: Changed property access from 'fullName' to 'full_name'.
-            studentName: studentMap.get(inv.studentId)?.full_name || 'Unknown Student',
+            studentName: studentMap.get(inv.studentId)?.personal_info.full_name || 'Unknown Student',
         })), [invoices, studentMap]);
 
     // Note: A more robust sorting implementation would be needed for production.
@@ -68,10 +67,13 @@ export const InvoiceTable: React.FC<{
 
     const sortedInvoices = useMemo(() => {
         return [...combinedInvoices].sort((a, b) => {
-            if (a[sortConfig.key] < b[sortConfig.key]) {
+            const valA = a[sortConfig.key];
+            const valB = b[sortConfig.key];
+
+            if (valA < valB) {
                 return sortConfig.direction === 'asc' ? -1 : 1;
             }
-            if (a[sortConfig.key] > b[sortConfig.key]) {
+            if (valA > valB) {
                 return sortConfig.direction === 'asc' ? 1 : -1;
             }
             return 0;

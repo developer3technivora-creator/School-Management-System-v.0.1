@@ -44,6 +44,7 @@ import { AdministrationPage } from '../administration/AdministrationPage';
 import { AttendanceManagementPage } from '../attendance/AttendanceManagementPage';
 import { FinancialManagementPage } from '../financial/FinancialManagementPage';
 import { StudentDashboardPage } from '../student/StudentDashboardPage';
+import { FacultyManagementPage } from './faculty/FacultyManagementPage';
 
 
 export type DashboardView = 'dashboard' | 'students' | 'courses' | 'meetings' | 'calendar' | 'homework' | 'profile' | 'admissions' | 'settings' | 'myChildren' | 'attendance' | 'grades' | 'fees' | 'shareCode' | 'faculty' | 'finance';
@@ -187,7 +188,7 @@ export const SchoolDashboardPage: React.FC<SchoolDashboardPageProps> = ({ user, 
                 case 'students':
                     return <AdmittedStudentsTab school={school!} />;
                 case 'faculty':
-                    return <AdministrationPage onBackToDashboard={() => setCurrentView('dashboard')} />;
+                    return <FacultyManagementPage onBackToDashboard={() => setCurrentView('dashboard')} />;
                 case 'attendance':
                     return <AttendanceManagementPage onBackToDashboard={() => setCurrentView('dashboard')} />;
                 case 'finance':
@@ -308,7 +309,7 @@ export const SchoolDashboardPage: React.FC<SchoolDashboardPageProps> = ({ user, 
                 </header>
 
                 {/* Content Area */}
-                <div className="bg-white dark:bg-slate-800/60 rounded-2xl shadow-lg p-6">
+                <div className="bg-transparent dark:bg-transparent rounded-2xl">
                     {renderContent()}
                 </div>
             </main>

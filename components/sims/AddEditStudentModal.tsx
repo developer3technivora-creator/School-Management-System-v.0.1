@@ -10,8 +10,25 @@ interface AddEditStudentModalProps {
     students: Student[];
 }
 
+// FIX: Create a flat interface for the form data to simplify state management.
+interface StudentFormData {
+    student_id: string;
+    full_name: string;
+    date_of_birth: string;
+    grade: string;
+    enrollment_status: 'Enrolled' | 'Withdrawn' | 'Graduated' | 'Pending';
+    gender: 'Male' | 'Female' | 'Other' | '';
+    address: string;
+    parent_guardian_name: string;
+    parent_guardian_phone: string;
+    parent_guardian_email: string;
+    emergency_contact_name: string;
+    emergency_contact_phone: string;
+}
+
+
 // FIX: Corrected property names from camelCase to snake_case.
-const initialFormState: Omit<Student, 'id' | 'photo_url'> = {
+const initialFormState: StudentFormData = {
     student_id: '',
     full_name: '',
     date_of_birth: '',
@@ -28,15 +45,30 @@ const initialFormState: Omit<Student, 'id' | 'photo_url'> = {
 };
 
 export const AddEditStudentModal: React.FC<AddEditStudentModalProps> = ({ isOpen, onClose, onSave, student, students }) => {
-    const [formData, setFormData] = useState<Omit<Student, 'id' | 'photo_url'>>(initialFormState);
-    const [errors, setErrors] = useState<Partial<Record<keyof Student, string>>>({});
+    // FIX: Use the flat StudentFormData interface for the form state.
+    const [formData, setFormData] = useState<StudentFormData>(initialFormState);
+    // FIX: Errors should correspond to the flat form data structure.
+    const [errors, setErrors] = useState<Partial<Record<keyof StudentFormData, string>>>({});
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     
     useEffect(() => {
         if (student) {
-            const { id, photo_url, ...rest } = student;
-            setFormData(rest);
-            setPhotoPreview(photo_url || null);
+            // FIX: Flatten the nested student object into the form state.
+            setFormData({
+                student_id: student.student_id,
+                full_name: student.personal_info.full_name,
+                date_of_birth: student.personal_info.date_of_birth,
+                gender: student.personal_info.gender,
+                address: student.personal_info.address,
+                grade: student.academic_info.grade,
+                enrollment_status: student.academic_info.enrollment_status,
+                parent_guardian_name: student.contact_info.parent_guardian.name,
+                parent_guardian_phone: student.contact_info.parent_guardian.phone,
+                parent_guardian_email: student.contact_info.parent_guardian.email,
+                emergency_contact_name: student.contact_info.emergency_contact.name,
+                emergency_contact_phone: student.contact_info.emergency_contact.phone
+            });
+            setPhotoPreview(student.photo_url || null);
         } else {
             const generateNextStudentId = () => {
                 const currentYear = new Date().getFullYear();
@@ -66,7 +98,7 @@ export const AddEditStudentModal: React.FC<AddEditStudentModalProps> = ({ isOpen
     }, [student, isOpen, students]);
 
     const validate = (): boolean => {
-        const newErrors: Partial<Record<keyof Student, string>> = {};
+        const newErrors: Partial<Record<keyof StudentFormData, string>> = {};
         // FIX: Changed property access from camelCase to snake_case.
         if (!formData.full_name.trim()) newErrors.full_name = "Full Name is required.";
         // FIX: Changed property access from camelCase to snake_case.
@@ -88,11 +120,34 @@ export const AddEditStudentModal: React.FC<AddEditStudentModalProps> = ({ isOpen
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (validate()) {
-            onSave({
-                ...formData,
+            // FIX: Un-flatten the form data into a nested Student object before saving.
+            const studentToSave: Student = {
                 id: student?.id || '', // Keep existing id or let parent handle new id
                 photo_url: photoPreview || undefined,
-            });
+                student_id: formData.student_id,
+                personal_info: {
+                    full_name: formData.full_name,
+                    date_of_birth: formData.date_of_birth,
+                    gender: formData.gender,
+                    address: formData.address
+                },
+                academic_info: {
+                    grade: formData.grade,
+                    enrollment_status: formData.enrollment_status,
+                },
+                contact_info: {
+                    parent_guardian: {
+                        name: formData.parent_guardian_name,
+                        phone: formData.parent_guardian_phone,
+                        email: formData.parent_guardian_email,
+                    },
+                    emergency_contact: {
+                        name: formData.emergency_contact_name,
+                        phone: formData.emergency_contact_phone,
+                    }
+                }
+            };
+            onSave(studentToSave);
         }
     };
 
@@ -148,7 +203,7 @@ export const AddEditStudentModal: React.FC<AddEditStudentModalProps> = ({ isOpen
                             {/* FIX: Changed property access and names from camelCase to snake_case. */}
                             <InputField name="full_name" label="Full Name" value={formData.full_name} onChange={handleChange} error={errors.full_name} />
                             {/* FIX: Changed property access and names from camelCase to snake_case. */}
-                            <InputField name="student_id" label="Student ID" value={formData.student_id} onChange={handleChange} error={errors.student_id} disabled={!student} />
+                            <InputField name="student_id" label="Student ID" value={formData.student_id} onChange={handleChange} error={errors.student_id} disabled={!!student} />
                             {/* FIX: Changed property access and names from camelCase to snake_case. */}
                             <InputField name="date_of_birth" label="Date of Birth" type="date" value={formData.date_of_birth} onChange={handleChange} error={errors.date_of_birth} />
                             {/* FIX: Replaced the generic SelectField with a custom select to handle 'Prefer not to say' mapping to an empty string value, which is a valid type for gender. */}

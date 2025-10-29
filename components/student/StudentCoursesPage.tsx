@@ -22,7 +22,7 @@ const mockTeachers: Record<string, string> = {
 };
 
 export const StudentCoursesPage: React.FC<{ student: Student }> = ({ student }) => {
-    const studentCourses = allCourses.filter(c => c.gradeLevel === student.grade);
+    const studentCourses = allCourses.filter(c => c.gradeLevel === student.academic_info.grade);
 
     return (
         <div className="space-y-6">

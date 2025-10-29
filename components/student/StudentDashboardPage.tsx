@@ -22,22 +22,32 @@ import {
 // Mock student data for Alice Johnson. In a real app, this would be fetched based on the logged-in user.
 const aliceJohnson: Student = { 
     id: '1', 
-    student_id: 'S-2024001', 
-    full_name: 'Alice Johnson', 
-    date_of_birth: '2008-05-12', 
-    grade: '10th Grade', 
-    enrollment_status: 'Enrolled', 
-    gender: 'Female', 
-    address: '123 Oak Ave, Springfield', 
-    parent_guardian_name: 'John Johnson', 
-    parent_guardian_phone: '555-1234', 
-    parent_guardian_email: 'j.johnson@email.com', 
-    emergency_contact_name: 'Jane Johnson', 
-    emergency_contact_phone: '555-5678',
-    admissionStatus: {
-        schoolName: 'Springfield High',
-        studentId: 'SPH-2024-0123',
-        admissionDate: '2024-08-15'
+    student_id: 'S-2024001',
+    personal_info: {
+        full_name: 'Alice Johnson', 
+        date_of_birth: '2008-05-12', 
+        gender: 'Female', 
+        address: '123 Oak Ave, Springfield',
+    },
+    academic_info: {
+        grade: '10th Grade', 
+        enrollment_status: 'Enrolled',
+        admission_status: {
+            schoolName: 'Springfield High',
+            studentId: 'SPH-2024-0123',
+            admissionDate: '2024-08-15'
+        }
+    },
+    contact_info: {
+        parent_guardian: {
+            name: 'John Johnson', 
+            phone: '555-1234', 
+            email: 'j.johnson@email.com',
+        },
+        emergency_contact: {
+            name: 'Jane Johnson', 
+            phone: '555-5678',
+        }
     }
 };
 
@@ -157,7 +167,7 @@ export const StudentDashboardPage: React.FC<StudentDashboardPageProps> = ({ user
                 <header className="flex justify-between items-center mb-6">
                     <div>
                         <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Student Dashboard</h1>
-                        <p className="mt-1 text-base text-slate-500 dark:text-slate-400">Welcome back, {student.full_name.split(' ')[0]}!</p>
+                        <p className="mt-1 text-base text-slate-500 dark:text-slate-400">Welcome back, {student.personal_info.full_name.split(' ')[0]}!</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <button className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><MoonIcon className="w-5 h-5"/></button>

@@ -75,8 +75,7 @@ export const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ isOpen, 
                             <div>
                                 <label htmlFor="student" className="block mb-2 text-sm font-medium text-slate-900 dark:text-white">Student</label>
                                 <select id="student" value={studentId} onChange={e => setStudentId(e.target.value)} className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
-                                    {/* FIX: Changed property access from 'fullName' to 'full_name'. */}
-                                    {students.map(s => <option key={s.id} value={s.id}>{s.full_name}</option>)}
+                                    {students.map(s => <option key={s.id} value={s.id}>{s.personal_info.full_name}</option>)}
                                 </select>
                             </div>
                             <div>

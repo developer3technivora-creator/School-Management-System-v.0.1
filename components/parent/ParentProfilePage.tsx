@@ -133,19 +133,29 @@ export const ParentProfilePage: React.FC<ParentProfilePageProps> = ({ user, onLo
         const studentToView: Student = {
             id: child.id,
             student_id: child.admissionStatus?.studentId || 'N/A',
-            full_name: child.fullName,
-            date_of_birth: child.age ? new Date(new Date().setFullYear(new Date().getFullYear() - Number(child.age))).toISOString().split('T')[0] : 'N/A',
-            grade: child.grade,
-            enrollment_status: child.admissionStatus ? 'Enrolled' : 'Pending',
-            gender: child.gender,
-            address: primaryGuardian.address,
-            parent_guardian_name: primaryGuardian.fullName,
-            parent_guardian_phone: primaryGuardian.phone,
-            parent_guardian_email: primaryGuardian.email || '',
-            emergency_contact_name: showSecondary && secondaryGuardian.fullName ? secondaryGuardian.fullName : primaryGuardian.fullName,
-            emergency_contact_phone: showSecondary && secondaryGuardian.phone ? secondaryGuardian.phone : primaryGuardian.phone,
-            photo_url: undefined,
-            admissionStatus: child.admissionStatus,
+            personal_info: {
+                full_name: child.fullName,
+                date_of_birth: child.age ? new Date(new Date().setFullYear(new Date().getFullYear() - Number(child.age))).toISOString().split('T')[0] : 'N/A',
+                gender: child.gender,
+                address: primaryGuardian.address,
+            },
+            academic_info: {
+                grade: child.grade,
+                enrollment_status: child.admissionStatus ? 'Enrolled' : 'Pending',
+                admission_status: child.admissionStatus,
+            },
+            contact_info: {
+                parent_guardian: {
+                    name: primaryGuardian.fullName,
+                    phone: primaryGuardian.phone,
+                    email: primaryGuardian.email || '',
+                },
+                emergency_contact: {
+                    name: showSecondary && secondaryGuardian.fullName ? secondaryGuardian.fullName : primaryGuardian.fullName,
+                    phone: showSecondary && secondaryGuardian.phone ? secondaryGuardian.phone : primaryGuardian.phone,
+                }
+            },
+            photo_url: undefined, // This can be added later if available on ChildProfile
         };
         onViewStudentPortal(studentToView);
     };

@@ -62,15 +62,12 @@ export const AttendanceTable: React.FC<{ students: Student[], records: Attendanc
                                 <th scope="row" className="flex items-center px-6 py-4 text-slate-900 whitespace-nowrap dark:text-white">
                                     <UserCircleIcon className="w-10 h-10 text-slate-400" />
                                     <div className="pl-3">
-                                        {/* FIX: Changed property access from 'fullName' to 'full_name'. */}
-                                        <div className="text-base font-semibold">{student.full_name}</div>
-                                        {/* FIX: Changed property access from 'parentGuardianEmail' to 'parent_guardian_email'. */}
-                                        <div className="font-normal text-slate-500">{student.parent_guardian_email}</div>
+                                        <div className="text-base font-semibold">{student.personal_info.full_name}</div>
+                                        <div className="font-normal text-slate-500">{student.contact_info.parent_guardian.email}</div>
                                     </div>
                                 </th>
-                                {/* FIX: Changed property access from 'studentId' to 'student_id'. */}
                                 <td className="px-6 py-4">{student.student_id}</td>
-                                <td className="px-6 py-4">{student.grade}</td>
+                                <td className="px-6 py-4">{student.academic_info.grade}</td>
                                 <td className="px-6 py-4">
                                     <div className={`flex items-center gap-2 font-semibold ${textClass}`}>
                                         {icon}

@@ -126,6 +126,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false);
     if (error) {
       console.error('Auth Error:', error.message);
+      // Provide a more user-friendly message for common auth errors
+      if (error.message === 'Invalid login credentials') {
+        return 'Incorrect email or password. Please check your credentials and try again.';
+      }
       return error.message;
     }
     return null;

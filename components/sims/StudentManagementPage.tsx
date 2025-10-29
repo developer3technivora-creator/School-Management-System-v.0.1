@@ -9,12 +9,39 @@ import { ArrowUturnLeftIcon, PlusIcon, UsersIcon } from '../Icons';
 
 // Mock Data - in a real app, this would come from an API
 const initialStudents: Student[] = [
-    // FIX: Corrected property names from camelCase to snake_case to match the Student type.
-    { id: '1', student_id: 'S-2024001', full_name: 'Alice Johnson', date_of_birth: '2008-05-12', grade: '10th Grade', enrollment_status: 'Enrolled', gender: 'Female', address: '123 Oak Ave, Springfield', parent_guardian_name: 'John Johnson', parent_guardian_phone: '555-1234', parent_guardian_email: 'j.johnson@email.com', emergency_contact_name: 'Jane Johnson', emergency_contact_phone: '555-5678' },
-    // FIX: Corrected property names from camelCase to snake_case to match the Student type.
-    { id: '2', student_id: 'S-2024002', full_name: 'Bob Williams', date_of_birth: '2009-02-20', grade: '9th Grade', enrollment_status: 'Enrolled', gender: 'Male', address: '456 Maple St, Springfield', parent_guardian_name: 'Sarah Williams', parent_guardian_phone: '555-2345', parent_guardian_email: 's.williams@email.com', emergency_contact_name: 'Tom Williams', emergency_contact_phone: '555-6789' },
-    // FIX: Corrected property names from camelCase to snake_case to match the Student type.
-    { id: '3', student_id: 'S-2024003', full_name: 'Charlie Brown', date_of_birth: '2007-11-30', grade: '11th Grade', enrollment_status: 'Withdrawn', gender: 'Male', address: '789 Pine Ln, Springfield', parent_guardian_name: 'David Brown', parent_guardian_phone: '555-3456', parent_guardian_email: 'd.brown@email.com', emergency_contact_name: 'Susan Brown', emergency_contact_phone: '555-7890' },
+    // FIX: Corrected property names from camelCase to snake_case and structure to nested to match the Student type.
+    { 
+        id: '1', 
+        student_id: 'S-2024001',
+        personal_info: { full_name: 'Alice Johnson', date_of_birth: '2008-05-12', gender: 'Female', address: '123 Oak Ave, Springfield' },
+        academic_info: { grade: '10th Grade', enrollment_status: 'Enrolled' },
+        contact_info: { 
+            parent_guardian: { name: 'John Johnson', phone: '555-1234', email: 'j.johnson@email.com' },
+            emergency_contact: { name: 'Jane Johnson', phone: '555-5678' }
+        }
+    },
+    // FIX: Corrected property names from camelCase to snake_case and structure to nested to match the Student type.
+    { 
+        id: '2', 
+        student_id: 'S-2024002',
+        personal_info: { full_name: 'Bob Williams', date_of_birth: '2009-02-20', gender: 'Male', address: '456 Maple St, Springfield' },
+        academic_info: { grade: '9th Grade', enrollment_status: 'Enrolled' },
+        contact_info: { 
+            parent_guardian: { name: 'Sarah Williams', phone: '555-2345', email: 's.williams@email.com' },
+            emergency_contact: { name: 'Tom Williams', phone: '555-6789' }
+        }
+    },
+    // FIX: Corrected property names from camelCase to snake_case and structure to nested to match the Student type.
+    { 
+        id: '3', 
+        student_id: 'S-2024003',
+        personal_info: { full_name: 'Charlie Brown', date_of_birth: '2007-11-30', gender: 'Male', address: '789 Pine Ln, Springfield' },
+        academic_info: { grade: '11th Grade', enrollment_status: 'Withdrawn' },
+        contact_info: { 
+            parent_guardian: { name: 'David Brown', phone: '555-3456', email: 'd.brown@email.com' },
+            emergency_contact: { name: 'Susan Brown', phone: '555-7890' }
+        }
+    },
 ];
 
 export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
@@ -72,11 +99,11 @@ export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> 
 
     const filteredStudents = useMemo(() => {
         return students.filter(student =>
-            // FIX: Changed property access from camelCase to snake_case.
-            student.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            // FIX: Changed property access from camelCase to snake_case and to use nested structure.
+            student.personal_info.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             // FIX: Changed property access from camelCase to snake_case.
             student.student_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.grade.toLowerCase().includes(searchTerm.toLowerCase())
+            student.academic_info.grade.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [students, searchTerm]);
 

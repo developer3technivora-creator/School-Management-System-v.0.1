@@ -5,11 +5,37 @@ import { MarkAttendanceModal } from './MarkAttendanceModal';
 import { ArrowUturnLeftIcon, DocumentCheckIcon, PlusIcon } from '../Icons';
 
 // Mock Data
-// FIX: Corrected property names from camelCase to snake_case to match the Student type.
 const mockStudents: Student[] = [
-    { id: '1', student_id: 'S-2024001', full_name: 'Alice Johnson', date_of_birth: '2008-05-12', grade: '10th Grade', enrollment_status: 'Enrolled', gender: 'Female', address: '123 Oak Ave, Springfield', parent_guardian_name: 'John Johnson', parent_guardian_phone: '555-1234', parent_guardian_email: 'j.johnson@email.com', emergency_contact_name: 'Jane Johnson', emergency_contact_phone: '555-5678' },
-    { id: '2', student_id: 'S-2024002', full_name: 'Bob Williams', date_of_birth: '2009-02-20', grade: '9th Grade', enrollment_status: 'Enrolled', gender: 'Male', address: '456 Maple St, Springfield', parent_guardian_name: 'Sarah Williams', parent_guardian_phone: '555-2345', parent_guardian_email: 's.williams@email.com', emergency_contact_name: 'Tom Williams', emergency_contact_phone: '555-6789' },
-    { id: '3', student_id: 'S-2024003', full_name: 'Charlie Brown', date_of_birth: '2007-11-30', grade: '11th Grade', enrollment_status: 'Enrolled', gender: 'Male', address: '789 Pine Ln, Springfield', parent_guardian_name: 'David Brown', parent_guardian_phone: '555-3456', parent_guardian_email: 'd.brown@email.com', emergency_contact_name: 'Susan Brown', emergency_contact_phone: '555-7890' },
+    { 
+        id: '1', 
+        student_id: 'S-2024001',
+        personal_info: { full_name: 'Alice Johnson', date_of_birth: '2008-05-12', gender: 'Female', address: '123 Oak Ave, Springfield' },
+        academic_info: { grade: '10th Grade', enrollment_status: 'Enrolled' },
+        contact_info: { 
+            parent_guardian: { name: 'John Johnson', phone: '555-1234', email: 'j.johnson@email.com' },
+            emergency_contact: { name: 'Jane Johnson', phone: '555-5678' }
+        }
+    },
+    { 
+        id: '2', 
+        student_id: 'S-2024002',
+        personal_info: { full_name: 'Bob Williams', date_of_birth: '2009-02-20', gender: 'Male', address: '456 Maple St, Springfield' },
+        academic_info: { grade: '9th Grade', enrollment_status: 'Enrolled' },
+        contact_info: { 
+            parent_guardian: { name: 'Sarah Williams', phone: '555-2345', email: 's.williams@email.com' },
+            emergency_contact: { name: 'Tom Williams', phone: '555-6789' }
+        }
+    },
+    { 
+        id: '3', 
+        student_id: 'S-2024003',
+        personal_info: { full_name: 'Charlie Brown', date_of_birth: '2007-11-30', gender: 'Male', address: '789 Pine Ln, Springfield' },
+        academic_info: { grade: '11th Grade', enrollment_status: 'Enrolled' },
+        contact_info: { 
+            parent_guardian: { name: 'David Brown', phone: '555-3456', email: 'd.brown@email.com' },
+            emergency_contact: { name: 'Susan Brown', phone: '555-7890' }
+        }
+    },
 ];
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];

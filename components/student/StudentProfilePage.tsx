@@ -36,36 +36,36 @@ export const StudentProfilePage: React.FC<{ student: Student }> = ({ student }) 
 
             <div className="space-y-6">
                 <InfoCard title="Personal Information" icon={<IdentificationIcon className="w-6 h-6" />}>
-                    <InfoItem label="Full Name" value={student.full_name} />
+                    <InfoItem label="Full Name" value={student.personal_info.full_name} />
                     <InfoItem label="Student ID" value={student.student_id} />
-                    <InfoItem label="Date of Birth" value={student.date_of_birth} />
-                    <InfoItem label="Gender" value={student.gender} />
-                    <InfoItem label="Grade" value={student.grade} />
-                    <InfoItem label="Enrollment Status" value={student.enrollment_status} />
+                    <InfoItem label="Date of Birth" value={student.personal_info.date_of_birth} />
+                    <InfoItem label="Gender" value={student.personal_info.gender} />
+                    <InfoItem label="Grade" value={student.academic_info.grade} />
+                    <InfoItem label="Enrollment Status" value={student.academic_info.enrollment_status} />
                     <div className="sm:col-span-2">
-                        <InfoItem label="Address" value={student.address} />
+                        <InfoItem label="Address" value={student.personal_info.address} />
                     </div>
                 </InfoCard>
 
-                {student.admissionStatus && (
+                {student.academic_info.admission_status && (
                      <InfoCard title="School Admission" icon={<AcademicCapIcon className="w-6 h-6" />}>
-                        <InfoItem label="School Name" value={student.admissionStatus.schoolName} />
-                        <InfoItem label="School Student ID" value={<span className="font-mono">{student.admissionStatus.studentId}</span>} />
-                        <InfoItem label="Admission Date" value={new Date(student.admissionStatus.admissionDate).toLocaleDateString()} />
+                        <InfoItem label="School Name" value={student.academic_info.admission_status.schoolName} />
+                        <InfoItem label="School Student ID" value={<span className="font-mono">{student.academic_info.admission_status.studentId}</span>} />
+                        <InfoItem label="Admission Date" value={new Date(student.academic_info.admission_status.admissionDate).toLocaleDateString()} />
                     </InfoCard>
                 )}
 
                 <InfoCard title="Parent / Guardian Information" icon={<UserGroupIcon className="w-6 h-6" />}>
-                    <InfoItem label="Parent/Guardian Name" value={student.parent_guardian_name} />
-                    <InfoItem label="Parent Phone" value={student.parent_guardian_phone} />
+                    <InfoItem label="Parent/Guardian Name" value={student.contact_info.parent_guardian.name} />
+                    <InfoItem label="Parent Phone" value={student.contact_info.parent_guardian.phone} />
                     <div className="sm:col-span-2">
-                     <InfoItem label="Parent Email" value={student.parent_guardian_email} />
+                     <InfoItem label="Parent Email" value={student.contact_info.parent_guardian.email} />
                     </div>
                 </InfoCard>
 
                  <InfoCard title="Emergency Contact" icon={<ExclamationTriangleIcon className="w-6 h-6" />}>
-                    <InfoItem label="Contact Name" value={student.emergency_contact_name} />
-                    <InfoItem label="Contact Phone" value={student.emergency_contact_phone} />
+                    <InfoItem label="Contact Name" value={student.contact_info.emergency_contact.name} />
+                    <InfoItem label="Contact Phone" value={student.contact_info.emergency_contact.phone} />
                 </InfoCard>
             </div>
         </div>

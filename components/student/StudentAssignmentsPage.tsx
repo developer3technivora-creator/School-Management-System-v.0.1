@@ -30,7 +30,7 @@ const getStatus = (dueDate: string) => {
 
 export const StudentAssignmentsPage: React.FC<{ student: Student }> = ({ student }) => {
     const studentAssignments = initialHomeworks
-        .filter(hw => hw.gradeLevel === student.grade)
+        .filter(hw => hw.gradeLevel === student.academic_info.grade)
         .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
 
     return (

@@ -19,24 +19,38 @@ export enum Role {
 export interface Student {
     id: string;
     student_id: string;
-    full_name: string;
-    date_of_birth: string;
-    grade: string;
-    enrollment_status: 'Enrolled' | 'Withdrawn' | 'Graduated' | 'Pending';
-    gender: 'Male' | 'Female' | 'Other' | '';
-    address: string;
-    parent_guardian_name: string;
-    parent_guardian_phone: string;
-    parent_guardian_email: string;
-    emergency_contact_name: string;
-    emergency_contact_phone: string;
     photo_url?: string;
-    admissionStatus?: {
-        schoolName: string;
-        studentId: string;
-        admissionDate: string;
-    } | null;
+
+    personal_info: {
+        full_name: string;
+        date_of_birth: string;
+        gender: 'Male' | 'Female' | 'Other' | '';
+        address: string;
+    };
+
+    academic_info: {
+        grade: string;
+        enrollment_status: 'Enrolled' | 'Withdrawn' | 'Graduated' | 'Pending';
+        admission_status?: {
+            schoolName: string;
+            studentId: string;
+            admissionDate: string;
+        } | null;
+    };
+
+    contact_info: {
+        parent_guardian: {
+            name: string;
+            phone: string;
+            email: string;
+        };
+        emergency_contact: {
+            name: string;
+            phone: string;
+        };
+    };
 }
+
 
 export interface CourseGrade {
     id: string;
