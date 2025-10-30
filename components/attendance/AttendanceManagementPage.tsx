@@ -3,54 +3,12 @@ import type { Student, AttendanceRecord } from '../../types';
 import { AttendanceTable } from './AttendanceTable';
 import { MarkAttendanceModal } from './MarkAttendanceModal';
 import { ArrowUturnLeftIcon, DocumentCheckIcon, PlusIcon } from '../Icons';
-
-// Mock Data
-const mockStudents: Student[] = [
-    { 
-        id: '1', 
-        student_id: 'S-2024001',
-        personal_info: { full_name: 'Alice Johnson', date_of_birth: '2008-05-12', gender: 'Female', address: '123 Oak Ave, Springfield' },
-        academic_info: { grade: '10th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'John Johnson', phone: '555-1234', email: 'j.johnson@email.com' },
-            emergency_contact: { name: 'Jane Johnson', phone: '555-5678' }
-        }
-    },
-    { 
-        id: '2', 
-        student_id: 'S-2024002',
-        personal_info: { full_name: 'Bob Williams', date_of_birth: '2009-02-20', gender: 'Male', address: '456 Maple St, Springfield' },
-        academic_info: { grade: '9th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'Sarah Williams', phone: '555-2345', email: 's.williams@email.com' },
-            emergency_contact: { name: 'Tom Williams', phone: '555-6789' }
-        }
-    },
-    { 
-        id: '3', 
-        student_id: 'S-2024003',
-        personal_info: { full_name: 'Charlie Brown', date_of_birth: '2007-11-30', gender: 'Male', address: '789 Pine Ln, Springfield' },
-        academic_info: { grade: '11th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'David Brown', phone: '555-3456', email: 'd.brown@email.com' },
-            emergency_contact: { name: 'Susan Brown', phone: '555-7890' }
-        }
-    },
-];
-
-const getTodayDateString = () => new Date().toISOString().split('T')[0];
-
-const initialAttendance: AttendanceRecord[] = [
-    { id: 'att1', studentId: '1', date: getTodayDateString(), status: 'Present' },
-    { id: 'att2', studentId: '2', date: getTodayDateString(), status: 'Absent', notes: 'Feeling unwell' },
-    { id: 'att3', studentId: '3', date: getTodayDateString(), status: 'Late', notes: 'Arrived at 9:15 AM' },
-];
-
+import { mockStudents, mockAttendanceRecords } from '../../data/mockData';
 
 export const AttendanceManagementPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
-    const [allAttendance, setAllAttendance] = useState<AttendanceRecord[]>(initialAttendance);
+    const [allAttendance, setAllAttendance] = useState<AttendanceRecord[]>(mockAttendanceRecords);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(getTodayDateString());
+    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
     const recordsForSelectedDate = useMemo(() => {
         return allAttendance.filter(rec => rec.date === selectedDate);

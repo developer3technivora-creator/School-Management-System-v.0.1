@@ -1,27 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowUturnLeftIcon, DocumentCheckIcon, CheckCircleIcon, XCircleIcon, ClockIcon, InformationCircleIcon, UserCircleIcon } from '../Icons';
 import type { AttendanceRecord, ChildProfile, AttendanceStatus } from '../../types';
-
-// Mock Data
-const mockChildren: ChildProfile[] = [
-    { id: 'child1', guardianId: 'user1', fullName: 'Alice Johnson', gender: 'Female', age: 15, grade: '10th Grade', hobbies: 'Reading, Painting', documents: [] },
-    { id: 'child2', guardianId: 'user1', fullName: 'Alex Johnson', gender: 'Male', age: 13, grade: '8th Grade', hobbies: 'Soccer, Video Games', documents: [] },
-];
-
-const mockAttendance: { [childId: string]: AttendanceRecord[] } = {
-    'child1': [
-        { id: 'att1', studentId: 'child1', date: '2024-10-25', status: 'Present' },
-        { id: 'att2', studentId: 'child1', date: '2024-10-24', status: 'Present' },
-        { id: 'att3', studentId: 'child1', date: '2024-10-23', status: 'Absent', notes: 'Feeling unwell' },
-        { id: 'att4', studentId: 'child1', date: '2024-10-22', status: 'Present' },
-        { id: 'att5', studentId: 'child1', date: '2024-10-21', status: 'Late', notes: 'Arrived at 9:15 AM' },
-    ],
-    'child2': [
-        { id: 'att6', studentId: 'child2', date: '2024-10-25', status: 'Present' },
-        { id: 'att7', studentId: 'child2', date: '2024-10-24', status: 'Excused', notes: 'Doctor\'s appointment' },
-        { id: 'att8', studentId: 'child2', date: '2024-10-23', status: 'Present' },
-    ],
-};
+import { mockChildren, mockParentAttendance } from '../../data/mockData';
 
 const getStatusInfo = (status: AttendanceStatus) => {
     switch (status) {
@@ -45,7 +25,7 @@ const StatCard: React.FC<{ title: string, value: number, icon: React.ReactNode }
 
 export const ParentAttendancePage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
     const [selectedChildId, setSelectedChildId] = useState<string>(mockChildren[0].id);
-    const selectedChildRecords = mockAttendance[selectedChildId] || [];
+    const selectedChildRecords = mockParentAttendance[selectedChildId] || [];
 
     const attendanceStats = useMemo(() => {
         return selectedChildRecords.reduce((acc, record) => {

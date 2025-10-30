@@ -1,25 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowUturnLeftIcon, ChartBarIcon, TrophyIcon } from '../Icons';
 import type { CourseGrade, ChildProfile } from '../../types';
-
-// Mock Data
-const mockChildren: ChildProfile[] = [
-    { id: 'child1', guardianId: 'user1', fullName: 'Alice Johnson', gender: 'Female', age: 15, grade: '10th Grade', hobbies: 'Reading, Painting', documents: [] },
-    { id: 'child2', guardianId: 'user1', fullName: 'Alex Johnson', gender: 'Male', age: 13, grade: '8th Grade', hobbies: 'Soccer, Video Games', documents: [] },
-];
-
-const mockAcademicData: { [childId: string]: CourseGrade[] } = {
-    'child1': [
-        { id: 'g1', courseName: 'Algebra II', semester: 'Fall 2024', grade: 'A', score: 94 },
-        { id: 'g2', courseName: 'English Literature', semester: 'Fall 2024', grade: 'B', score: 85 },
-        { id: 'g3', courseName: 'World History', semester: 'Fall 2024', grade: 'A', score: 98 },
-        { id: 'g4', courseName: 'Physics', semester: 'Spring 2024', grade: 'B', score: 89 },
-    ],
-    'child2': [
-        { id: 'g5', courseName: 'Pre-Algebra', semester: 'Fall 2024', grade: 'B', score: 88 },
-        { id: 'g6', courseName: 'Life Science', semester: 'Fall 2024', grade: 'A', score: 92 },
-    ],
-};
+import { mockChildren, mockAcademicData } from '../../data/mockData';
 
 const gradeToPoints: Record<CourseGrade['grade'], number> = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0 };
 const gradeToColor: Record<CourseGrade['grade'], string> = {

@@ -1,13 +1,7 @@
 import React, { useMemo } from 'react';
 import { ArrowUturnLeftIcon, CurrencyDollarIcon } from '../Icons';
 import type { Invoice, FeeStatus } from '../../types';
-
-// Mock Data
-const initialInvoices: Invoice[] = [
-    { id: 'inv1', invoiceNumber: 'INV-2024-001', studentId: 'child1', status: 'Paid', items: [{id: 'i1', description: 'Annual Tuition Fee', amount: 5000}], totalAmount: 5000, issueDate: '2024-08-01', dueDate: '2024-09-01', paidDate: '2024-08-15' },
-    { id: 'inv2', invoiceNumber: 'INV-2024-002', studentId: 'child2', status: 'Due', items: [{id: 'i2', description: 'Annual Tuition Fee', amount: 4800}, {id: 'i3', description: 'Lab Fee', amount: 150}], totalAmount: 4950, issueDate: '2024-08-01', dueDate: '2024-09-01' },
-    { id: 'inv3', invoiceNumber: 'INV-2024-003', studentId: 'child1', status: 'Overdue', items: [{id: 'i4', description: 'Spring Semester Fee', amount: 2500}], totalAmount: 2500, issueDate: '2024-01-15', dueDate: '2024-02-15' },
-];
+import { mockInvoices } from '../../data/mockData';
 
 const getStatusClass = (status: FeeStatus) => {
     switch (status) {
@@ -21,10 +15,10 @@ const getStatusClass = (status: FeeStatus) => {
 export const ParentFinancialsPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
 
     const totalOutstanding = useMemo(() => {
-        return initialInvoices
+        return mockInvoices
             .filter(inv => inv.status === 'Due' || inv.status === 'Overdue')
             .reduce((acc, inv) => acc + inv.totalAmount, 0);
-    }, [initialInvoices]);
+    }, [mockInvoices]);
 
     return (
         <div className="min-h-screen bg-slate-100 dark:bg-slate-950 p-4 sm:p-6 lg:p-8 transition-colors duration-300">
@@ -75,7 +69,7 @@ export const ParentFinancialsPage: React.FC<{ onBackToDashboard: () => void }> =
                                 </tr>
                             </thead>
                             <tbody>
-                                {initialInvoices.map(invoice => (
+                                {mockInvoices.map(invoice => (
                                     <tr key={invoice.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700">
                                         <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{invoice.invoiceNumber}</td>
                                         <td className="px-6 py-4">{invoice.issueDate}</td>

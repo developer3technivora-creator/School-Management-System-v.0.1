@@ -6,46 +6,10 @@ import { AcademicRecordsModal } from './AcademicRecordsModal';
 import { HealthRecordsModal } from './HealthRecordsModal';
 import { StudentDetailPage } from './StudentDetailPage';
 import { ArrowUturnLeftIcon, PlusIcon, UsersIcon } from '../Icons';
-
-// Mock Data - in a real app, this would come from an API
-const initialStudents: Student[] = [
-    // FIX: Corrected property names from camelCase to snake_case and structure to nested to match the Student type.
-    { 
-        id: '1', 
-        student_id: 'S-2024001',
-        personal_info: { full_name: 'Alice Johnson', date_of_birth: '2008-05-12', gender: 'Female', address: '123 Oak Ave, Springfield' },
-        academic_info: { grade: '10th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'John Johnson', phone: '555-1234', email: 'j.johnson@email.com' },
-            emergency_contact: { name: 'Jane Johnson', phone: '555-5678' }
-        }
-    },
-    // FIX: Corrected property names from camelCase to snake_case and structure to nested to match the Student type.
-    { 
-        id: '2', 
-        student_id: 'S-2024002',
-        personal_info: { full_name: 'Bob Williams', date_of_birth: '2009-02-20', gender: 'Male', address: '456 Maple St, Springfield' },
-        academic_info: { grade: '9th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'Sarah Williams', phone: '555-2345', email: 's.williams@email.com' },
-            emergency_contact: { name: 'Tom Williams', phone: '555-6789' }
-        }
-    },
-    // FIX: Corrected property names from camelCase to snake_case and structure to nested to match the Student type.
-    { 
-        id: '3', 
-        student_id: 'S-2024003',
-        personal_info: { full_name: 'Charlie Brown', date_of_birth: '2007-11-30', gender: 'Male', address: '789 Pine Ln, Springfield' },
-        academic_info: { grade: '11th Grade', enrollment_status: 'Withdrawn' },
-        contact_info: { 
-            parent_guardian: { name: 'David Brown', phone: '555-3456', email: 'd.brown@email.com' },
-            emergency_contact: { name: 'Susan Brown', phone: '555-7890' }
-        }
-    },
-];
+import { mockStudents } from '../../data/mockData';
 
 export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
-    const [students, setStudents] = useState<Student[]>(initialStudents);
+    const [students, setStudents] = useState<Student[]>(mockStudents);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
     const [searchTerm, setSearchTerm] = useState('');

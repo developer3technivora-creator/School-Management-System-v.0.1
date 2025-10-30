@@ -1,32 +1,11 @@
 import React, { useState } from 'react';
 import type { ParentMessage } from '../../types';
 import { ArrowUturnLeftIcon, ChatBubbleLeftRightIcon, UserCircleIcon } from '../Icons';
-
-// Mock Data
-const initialMessages: ParentMessage[] = [
-    {
-        id: 'msg1',
-        parentId: 'p1',
-        parentName: 'John Johnson (Alice\'s Father)',
-        conversation: [
-            { id: 'c1', sender: 'parent', text: 'Good morning, I have a question about the upcoming field trip.', timestamp: '2024-10-25T09:05:00Z' },
-            { id: 'c2', sender: 'school', text: 'Of course, how can I help?', timestamp: '2024-10-25T09:07:00Z' },
-        ],
-    },
-    {
-        id: 'msg2',
-        parentId: 'p2',
-        parentName: 'Sarah Williams (Bob\'s Mother)',
-        conversation: [
-            { id: 'c3', sender: 'parent', text: 'Hi, I wanted to report that Bob will be absent today due to a doctor\'s appointment.', timestamp: '2024-10-24T08:15:00Z' },
-            { id: 'c4', sender: 'school', text: 'Thank you for letting us know. We have marked him as excused. We hope he feels better soon!', timestamp: '2024-10-24T08:16:00Z' },
-        ],
-    },
-];
+import { mockParentMessages } from '../../data/mockData';
 
 export const ParentalCommunicationPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
-    const [messages, setMessages] = useState<ParentMessage[]>(initialMessages);
-    const [selectedConversationId, setSelectedConversationId] = useState<string | null>(initialMessages[0]?.id || null);
+    const [messages, setMessages] = useState<ParentMessage[]>(mockParentMessages);
+    const [selectedConversationId, setSelectedConversationId] = useState<string | null>(mockParentMessages[0]?.id || null);
     const [newMessage, setNewMessage] = useState('');
 
     const selectedConversation = messages.find(m => m.id === selectedConversationId);

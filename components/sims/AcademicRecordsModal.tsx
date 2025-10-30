@@ -1,21 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import type { Student, CourseGrade } from '../../types';
 import { AcademicCapIcon, PlusIcon, TrashIcon, TrophyIcon } from '../Icons';
-
-// Mock Data - in a real app, this would be fetched from an API
-const mockAcademicData: { [studentId: string]: CourseGrade[] } = {
-    '1': [
-        { id: 'g1', courseName: 'Algebra II', semester: 'Fall 2024', grade: 'A', score: 94 },
-        { id: 'g2', courseName: 'English Literature', semester: 'Fall 2024', grade: 'B', score: 85 },
-        { id: 'g3', courseName: 'World History', semester: 'Fall 2024', grade: 'A', score: 98 },
-        { id: 'g4', courseName: 'Physics', semester: 'Spring 2024', grade: 'B', score: 89 },
-    ],
-    '2': [
-        { id: 'g5', courseName: 'Biology', semester: 'Fall 2024', grade: 'C', score: 78 },
-        { id: 'g6', courseName: 'Geometry', semester: 'Fall 2024', grade: 'B', score: 88 },
-    ],
-    '3': [],
-};
+import { mockAcademicData } from '../../data/mockData';
 
 const gradeToPoints: Record<CourseGrade['grade'], number> = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0 };
 

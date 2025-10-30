@@ -13,17 +13,7 @@ import {
     AdjustmentsHorizontalIcon
 } from '../../Icons';
 import { AddEditStaffModal } from '../../administration/AddEditStaffModal';
-
-// Mock Data
-const initialStaff: StaffMember[] = [
-    { id: 'st1', staffId: 'T-001', fullName: 'John Davis', role: StaffRole.Principal, email: 'j.davis@school.edu', phone: '555-0101', joiningDate: '2010-08-15', status: 'Active' },
-    { id: 'st2', staffId: 'T-002', fullName: 'Emily White', role: StaffRole.Teacher, email: 'e.white@school.edu', phone: '555-0102', joiningDate: '2015-09-01', status: 'Active' },
-    { id: 'st3', staffId: 'T-003', fullName: 'Michael Green', role: StaffRole.Counselor, email: 'm.green@school.edu', phone: '555-0103', joiningDate: '2018-03-10', status: 'Active' },
-    { id: 'st4', staffId: 'T-004', fullName: 'Sarah Blue', role: StaffRole.Librarian, email: 's.blue@school.edu', phone: '555-0104', joiningDate: '2020-01-20', status: 'On Leave' },
-    { id: 'st5', staffId: 'T-005', fullName: 'David Black', role: StaffRole.Teacher, email: 'd.black@school.edu', phone: '555-0105', joiningDate: '2019-07-22', status: 'Active' },
-    { id: 'st6', staffId: 'T-006', fullName: 'Laura Grey', role: StaffRole.Admin, email: 'l.grey@school.edu', phone: '555-0106', joiningDate: '2021-02-11', status: 'Active' },
-    { id: 'st7', staffId: 'T-007', fullName: 'Robert Brown', role: StaffRole.Teacher, email: 'r.brown@school.edu', phone: '555-0107', joiningDate: '2014-08-25', status: 'Terminated' },
-];
+import { mockStaff } from '../../../data/mockData';
 
 const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode; }> = ({ title, value, icon }) => (
     <div className="bg-white dark:bg-slate-800/60 p-5 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700/80 flex items-center gap-4">
@@ -95,7 +85,7 @@ const FacultyCard: React.FC<{ member: StaffMember; onEdit: (member: StaffMember)
 
 
 export const FacultyManagementPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
-    const [staff, setStaff] = useState<StaffMember[]>(initialStaff);
+    const [staff, setStaff] = useState<StaffMember[]>(mockStaff);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
     const [searchTerm, setSearchTerm] = useState('');

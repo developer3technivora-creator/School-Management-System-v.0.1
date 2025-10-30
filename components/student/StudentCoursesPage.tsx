@@ -1,7 +1,8 @@
 import React from 'react';
 import type { Student } from '../../types';
 import { BookOpenIcon } from '../Icons';
-import { initialCourses as allCourses } from '../school/courses/CourseManagementPage';
+// FIX: Corrected the import to pull course data directly from mockData.ts as 'initialCourses' was not exported from CourseManagementPage.
+import { mockCourses as allCourses } from '../../data/mockData';
 
 // Mock data for teachers. This could be expanded or moved to a central place in a real app.
 const mockTeachers: Record<string, string> = {

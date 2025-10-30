@@ -1,51 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Student, HealthRecord } from '../../types';
 import { HeartIcon, ShieldCheckIcon } from '../Icons';
-
-// Mock Data - in a real app, this would be fetched from a secure API
-const mockHealthData: { [studentId: string]: HealthRecord } = {
-    '1': {
-        studentId: '1',
-        bloodType: 'O+',
-        allergies: ['Peanuts', 'Penicillin'],
-        medicalConditions: ['Asthma (Mild)'],
-        medications: [{ name: 'Albuterol Inhaler', dosage: '2 puffs', frequency: 'As needed', reason: 'Asthma' }],
-        emergencyContact: { name: 'Jane Johnson', relationship: 'Mother', phone: '555-5678' },
-        physician: { name: 'Dr. Emily Carter', clinic: 'Springfield Pediatrics', phone: '555-8765' },
-        vaccinations: [
-            { id: 'v1', vaccineName: 'MMR', dateAdministered: '2010-06-01', administeredBy: 'Dr. Carter' },
-            { id: 'v2', vaccineName: 'DTaP', dateAdministered: '2010-06-01', administeredBy: 'Dr. Carter' },
-            { id: 'v3', vaccineName: 'Hepatitis B', dateAdministered: '2012-08-15', administeredBy: 'Dr. Carter' },
-        ],
-        lastHealthCheckupDate: '2023-08-20',
-    },
-    '2': {
-        studentId: '2',
-        bloodType: 'A-',
-        allergies: ['None known'],
-        medicalConditions: ['None known'],
-        medications: [],
-        emergencyContact: { name: 'Tom Williams', relationship: 'Father', phone: '555-6789' },
-        physician: { name: 'Dr. Alan Grant', clinic: 'City Health Clinic', phone: '555-4321' },
-        vaccinations: [
-            { id: 'v4', vaccineName: 'MMR', dateAdministered: '2011-03-10', administeredBy: 'Dr. Grant' },
-            { id: 'v5', vaccineName: 'Varicella', dateAdministered: '2011-03-10', administeredBy: 'Dr. Grant' },
-        ],
-        lastHealthCheckupDate: '2024-01-15',
-    },
-    '3': {
-        studentId: '3',
-        bloodType: 'B+',
-        allergies: ['Lactose Intolerance'],
-        medicalConditions: [],
-        medications: [],
-        emergencyContact: { name: 'Susan Brown', relationship: 'Mother', phone: '555-7890' },
-        physician: { name: 'Dr. Emily Carter', clinic: 'Springfield Pediatrics', phone: '555-8765' },
-        vaccinations: [],
-        lastHealthCheckupDate: '2023-05-10',
-    }
-};
-
+import { mockHealthData } from '../../data/mockData';
 
 const InfoCard: React.FC<{ title: string; children: React.ReactNode; }> = ({ title, children }) => (
     <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700">

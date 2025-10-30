@@ -1,38 +1,12 @@
-
-
-
 import React, { useState, useMemo } from 'react';
 import type { StaffMember, SchoolEvent, AuthUser } from '../../types';
-import { StaffRole, EmploymentStatus, EventCategory } from '../../types';
+import { EmploymentStatus } from '../../types';
 import { ArrowUturnLeftIcon, Cog6ToothIcon, PlusIcon, PencilIcon, TrashIcon, UserCircleIcon, ChevronUpIcon, ChevronDownIcon } from '../Icons';
 import { AddEditStaffModal } from './AddEditStaffModal';
 import { AddEditEventModal } from './AddEditEventModal';
 import { SchoolEventList } from './SchoolEventList';
 import { UserList } from './UserList';
-
-
-
-// Mock Data
-const initialStaff: StaffMember[] = [
-    { id: 'st1', staffId: 'T-001', fullName: 'John Davis', role: StaffRole.Principal, email: 'j.davis@school.edu', phone: '555-0101', joiningDate: '2010-08-15', status: 'Active' },
-    { id: 'st2', staffId: 'T-002', fullName: 'Emily White', role: StaffRole.Teacher, email: 'e.white@school.edu', phone: '555-0102', joiningDate: '2015-09-01', status: 'Active' },
-    { id: 'st3', staffId: 'T-003', fullName: 'Michael Green', role: StaffRole.Counselor, email: 'm.green@school.edu', phone: '555-0103', joiningDate: '2018-03-10', status: 'Active' },
-    { id: 'st4', staffId: 'T-004', fullName: 'Sarah Blue', role: StaffRole.Librarian, email: 's.blue@school.edu', phone: '555-0104', joiningDate: '2020-01-20', status: 'On Leave' },
-];
-
-const initialEvents: SchoolEvent[] = [
-    { id: 'evt1', title: 'Parent-Teacher Conference', description: 'Discuss student progress.', startDate: '2024-10-05', category: EventCategory.Meeting },
-    { id: 'evt2', title: 'Science Fair', description: 'Annual school-wide science fair.', startDate: '2024-11-15', endDate: '2024-11-16', category: EventCategory.Academic },
-    { id: 'evt3', title: 'Winter Break', description: 'School closed for winter break.', startDate: '2024-12-23', endDate: '2025-01-03', category: EventCategory.Holiday },
-];
-
-// Mock user data for the new User Management section.
-// In a real app, this would be fetched from a secure backend function.
-const initialAuthUsers: AuthUser[] = [
-    { id: '2e55fa3d-ea11-4c97-8b03-19328512a543', displayName: 'Sanjay Dutt Sharma', email: 'sdsajmer@gmail.com', provider: 'email', createdAt: '2025-10-12T13:06:34Z', lastSignInAt: '2025-10-12T13:06:48Z' },
-    { id: '8a1b2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d', displayName: 'Jane Doe', email: 'jane.doe@example.com', provider: 'google', createdAt: '2025-10-11T10:20:00Z', lastSignInAt: '2025-10-12T09:15:30Z' },
-    { id: 'c4d5e6f7-8a9b-0c1d-2e3f-4a5b6c7d8e9f', displayName: 'John Smith', email: 'john.smith@example.com', provider: 'email', createdAt: '2025-10-10T15:00:12Z', lastSignInAt: '2025-10-10T15:00:12Z' },
-];
+import { mockStaff, mockEvents, mockAuthUsers } from '../../data/mockData';
 
 
 type SortKey = keyof StaffMember;
@@ -129,17 +103,17 @@ export const AdministrationPage: React.FC<{ onBackToDashboard: () => void }> = (
     const [activeTab, setActiveTab] = useState<AdminTab>('Users');
 
     // Staff state
-    const [staff, setStaff] = useState<StaffMember[]>(initialStaff);
+    const [staff, setStaff] = useState<StaffMember[]>(mockStaff);
     const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
     const [editingStaff, setEditingStaff] = useState<StaffMember | null>(null);
 
     // Event state
-    const [events, setEvents] = useState<SchoolEvent[]>(initialEvents);
+    const [events, setEvents] = useState<SchoolEvent[]>(mockEvents);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState<SchoolEvent | null>(null);
 
     // User Management State
-    const [users, setUsers] = useState<AuthUser[]>(initialAuthUsers);
+    const [users, setUsers] = useState<AuthUser[]>(mockAuthUsers);
     const [userSearchTerm, setUserSearchTerm] = useState('');
 
     const filteredUsers = useMemo(() => {

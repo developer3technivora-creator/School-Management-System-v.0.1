@@ -3,14 +3,7 @@ import type { SchoolEvent } from '../../types';
 import { EventCategory } from '../../types';
 import { ArrowUturnLeftIcon, CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from '../Icons';
 import { EventModal } from './EventModal';
-
-// Mock Data
-const initialEvents: SchoolEvent[] = [
-    { id: 'evt1', title: 'Parent-Teacher Conference', description: 'Discuss student progress.', startDate: '2024-10-05', category: EventCategory.Meeting },
-    { id: 'evt2', title: 'Science Fair', description: 'Annual school-wide science fair.', startDate: '2024-11-15', endDate: '2024-11-16', category: EventCategory.Academic },
-    { id: 'evt3', title: 'Winter Break', description: 'School closed for winter break.', startDate: '2024-12-23', endDate: '2025-01-03', category: EventCategory.Holiday },
-    { id: 'evt4', title: 'Championship Football Game', description: 'Go Tigers!', startDate: '2024-10-18', category: EventCategory.Sports },
-];
+import { mockEvents } from '../../data/mockData';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -25,7 +18,7 @@ const getCategoryColor = (category: EventCategory) => {
 };
 
 export const EventCalendarPage: React.FC = () => {
-    const [events, setEvents] = useState<SchoolEvent[]>(initialEvents);
+    const [events, setEvents] = useState<SchoolEvent[]>(mockEvents);
     const [currentDate, setCurrentDate] = useState(new Date());
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<SchoolEvent | null>(null);

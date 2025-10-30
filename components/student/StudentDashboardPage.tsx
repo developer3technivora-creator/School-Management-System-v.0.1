@@ -18,32 +18,7 @@ import {
     BookOpenIcon,
     MegaphoneIcon
 } from '../Icons';
-
-// Mock student data updated to match user's context.
-const rishabhSharma: Student = {
-    id: 'student-rishabh-01',
-    student_id: 'SMSR-GJFI-2025-0001',
-    personal_info: {
-        full_name: 'Rishabh sharma',
-        // Approximate DOB based on age 8
-        date_of_birth: new Date(new Date().setFullYear(new Date().getFullYear() - 8)).toISOString().split('T')[0],
-        gender: 'Male',
-        address: '123 Cricket Lane, Springfield',
-    },
-    academic_info: {
-        grade: '3', // As seen in screenshot
-        enrollment_status: 'Enrolled',
-        admission_status: {
-            schoolName: 'SMSRA',
-            studentId: 'SMSR-GJFI-2025-0001',
-            admissionDate: '2025-10-28',
-        }
-    },
-    contact_info: {
-        parent_guardian: { name: 'Parent Sharma', phone: '555-123-4567', email: 'parent@sharma.com' },
-        emergency_contact: { name: 'Parent Sharma', phone: '555-123-4567' }
-    }
-};
+import { rishabhSharma } from '../../data/mockData';
 
 
 import { StudentDashboardOverviewTab } from './StudentDashboardOverviewTab';

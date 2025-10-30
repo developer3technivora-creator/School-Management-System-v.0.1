@@ -4,40 +4,10 @@ import { Subject } from '../../../types';
 import { ArrowUturnLeftIcon, PencilSquareIcon, PlusIcon } from '../../Icons';
 import { AddEditHomeworkModal } from './AddEditHomeworkModal';
 import { HomeworkTable } from './HomeworkTable';
-
-const initialHomeworks: Homework[] = [
-    { 
-        id: 'HW1', 
-        title: 'Algebra Worksheet Chapter 3', 
-        instructions: 'Complete all odd-numbered problems from the worksheet attached.', 
-        subject: Subject.Mathematics, 
-        gradeLevel: '9th Grade', 
-        assignedDate: '2024-10-20', 
-        dueDate: '2024-10-27',
-        attachmentLink: 'https://example.com/worksheet.pdf'
-    },
-    { 
-        id: 'HW2', 
-        title: 'Essay: The Great Gatsby', 
-        instructions: 'Write a 500-word essay on the symbolism of the green light in The Great Gatsby.', 
-        subject: Subject.English, 
-        gradeLevel: '10th Grade', 
-        assignedDate: '2024-10-18', 
-        dueDate: '2024-10-25'
-    },
-    { 
-        id: 'HW3', 
-        title: 'Lab Report: Photosynthesis', 
-        instructions: 'Submit your lab report based on last week\'s experiment.', 
-        subject: Subject.Science, 
-        gradeLevel: '9th Grade', 
-        assignedDate: '2024-10-22', 
-        dueDate: '2024-10-29'
-    },
-];
+import { mockHomeworks } from '../../../data/mockData';
 
 export const HomeworkManagementPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
-    const [homeworks, setHomeworks] = useState<Homework[]>(initialHomeworks);
+    const [homeworks, setHomeworks] = useState<Homework[]>(mockHomeworks);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingHomework, setEditingHomework] = useState<Homework | null>(null);
 

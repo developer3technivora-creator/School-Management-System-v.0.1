@@ -4,18 +4,12 @@ import { MeetingType } from '../../../types';
 import { ArrowUturnLeftIcon, UserGroupIcon, PlusIcon } from '../../Icons';
 import { AddEditMeetingModal } from './AddEditMeetingModal';
 import { MeetingCard } from './MeetingCard';
-
-const initialMeetings: Meeting[] = [
-    { id: 'M1', title: 'Q3 Board Meeting', date: '2024-09-15', time: '10:00', type: MeetingType.Board, locationOrLink: 'Conference Room 1', attendees: [{id: '1', name: 'Principal Thompson', role: 'Admin'}, {id: '2', name: 'Board Members', role: 'Admin'}]},
-    { id: 'M2', title: 'Parent-Teacher Conferences - 10th Grade', date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], time: '14:00', type: MeetingType.ParentTeacher, locationOrLink: 'Various Classrooms', attendees: [{id: '3', name: '10th Grade Teachers', role: 'Teacher'}, {id: '4', name: 'Parents', role: 'Parent'}]},
-    { id: 'M3', title: 'Weekly Staff Sync', date: new Date().toISOString().split('T')[0], time: '08:30', type: MeetingType.Staff, locationOrLink: 'Staff Lounge', attendees: [{id: '5', name: 'All Staff', role: 'Teacher'}]},
-    { id: 'M4', title: 'Past IEP Meeting for C. Brown', date: '2024-05-20', time: '13:00', type: MeetingType.IEP, locationOrLink: 'Counseling Office', attendees: [{id: '6', name: 'Mr. Green', role: 'Teacher'}, {id: '7', name: 'David Brown', role: 'Parent'}]},
-];
+import { mockMeetings } from '../../../data/mockData';
 
 type MeetingFilter = 'upcoming' | 'past' | 'all';
 
 export const MeetingManagementPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
-    const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
+    const [meetings, setMeetings] = useState<Meeting[]>(mockMeetings);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null);
     const [activeFilter, setActiveFilter] = useState<MeetingFilter>('upcoming');

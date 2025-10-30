@@ -3,47 +3,9 @@ import type { Student, Invoice, FeeStatus } from '../../types';
 import { ArrowUturnLeftIcon, CurrencyDollarIcon, PlusIcon } from '../Icons';
 import { InvoiceTable } from './InvoiceTable';
 import { CreateInvoiceModal } from './CreateInvoiceModal';
+import { mockStudents, mockInvoices } from '../../data/mockData';
 
-// Mock Data
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
-const mockStudents: Student[] = [
-    { 
-        id: '1', 
-        student_id: 'S-2024001',
-        personal_info: { full_name: 'Alice Johnson', date_of_birth: '2008-05-12', gender: 'Female', address: '123 Oak Ave, Springfield' },
-        academic_info: { grade: '10th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'John Johnson', phone: '555-1234', email: 'j.johnson@email.com' },
-            emergency_contact: { name: 'Jane Johnson', phone: '555-5678' }
-        }
-    },
-    { 
-        id: '2', 
-        student_id: 'S-2024002',
-        personal_info: { full_name: 'Bob Williams', date_of_birth: '2009-02-20', gender: 'Male', address: '456 Maple St, Springfield' },
-        academic_info: { grade: '9th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'Sarah Williams', phone: '555-2345', email: 's.williams@email.com' },
-            emergency_contact: { name: 'Tom Williams', phone: '555-6789' }
-        }
-    },
-    { 
-        id: '3', 
-        student_id: 'S-2024003',
-        personal_info: { full_name: 'Charlie Brown', date_of_birth: '2007-11-30', gender: 'Male', address: '789 Pine Ln, Springfield' },
-        academic_info: { grade: '11th Grade', enrollment_status: 'Enrolled' },
-        contact_info: { 
-            parent_guardian: { name: 'David Brown', phone: '555-3456', email: 'd.brown@email.com' },
-            emergency_contact: { name: 'Susan Brown', phone: '555-7890' }
-        }
-    },
-];
-
-const initialInvoices: Invoice[] = [
-    { id: 'inv1', invoiceNumber: 'INV-2024-001', studentId: '1', status: 'Paid', items: [{id: 'i1', description: 'Annual Tuition Fee', amount: 5000}], totalAmount: 5000, issueDate: '2024-08-01', dueDate: '2024-09-01', paidDate: '2024-08-15' },
-    { id: 'inv2', invoiceNumber: 'INV-2024-002', studentId: '2', status: 'Due', items: [{id: 'i2', description: 'Annual Tuition Fee', amount: 4800}, {id: 'i3', description: 'Lab Fee', amount: 150}], totalAmount: 4950, issueDate: '2024-08-01', dueDate: '2024-09-01' },
-    { id: 'inv3', invoiceNumber: 'INV-2024-003', studentId: '3', status: 'Overdue', items: [{id: 'i4', description: 'Spring Semester Fee', amount: 2500}], totalAmount: 2500, issueDate: '2024-01-15', dueDate: '2024-02-15' },
-];
 
 const StatCard: React.FC<{ title: string, value: string, icon: React.ReactNode }> = ({ title, value, icon }) => (
     <div className="bg-white dark:bg-slate-800/80 p-6 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 flex items-center gap-4">
@@ -56,7 +18,7 @@ const StatCard: React.FC<{ title: string, value: string, icon: React.ReactNode }
 );
 
 export const FinancialManagementPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
-    const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
+    const [invoices, setInvoices] = useState<Invoice[]>(mockInvoices);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 

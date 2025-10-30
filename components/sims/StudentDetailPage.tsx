@@ -8,64 +8,7 @@ import {
     IdentificationIcon,
     ExclamationTriangleIcon,
 } from '../Icons';
-
-// Mock Data - in a real app, this would be fetched via an API call using the student ID
-const mockAcademicData: { [studentId: string]: CourseGrade[] } = {
-    '1': [
-        { id: 'g1', courseName: 'Algebra II', semester: 'Fall 2024', grade: 'A', score: 94 },
-        { id: 'g2', courseName: 'English Literature', semester: 'Fall 2024', grade: 'B', score: 85 },
-        { id: 'g3', courseName: 'World History', semester: 'Fall 2024', grade: 'A', score: 98 },
-        { id: 'g4', courseName: 'Physics', semester: 'Spring 2024', grade: 'B', score: 89 },
-    ],
-    '2': [
-        { id: 'g5', courseName: 'Biology', semester: 'Fall 2024', grade: 'C', score: 78 },
-        { id: 'g6', courseName: 'Geometry', semester: 'Fall 2024', grade: 'B', score: 88 },
-    ],
-    '3': [],
-};
-
-const mockHealthData: { [studentId: string]: HealthRecord } = {
-    '1': {
-        studentId: '1',
-        bloodType: 'O+',
-        allergies: ['Peanuts', 'Penicillin'],
-        medicalConditions: ['Asthma (Mild)'],
-        medications: [{ name: 'Albuterol Inhaler', dosage: '2 puffs', frequency: 'As needed', reason: 'Asthma' }],
-        emergencyContact: { name: 'Jane Johnson', relationship: 'Mother', phone: '555-5678' },
-        physician: { name: 'Dr. Emily Carter', clinic: 'Springfield Pediatrics', phone: '555-8765' },
-        vaccinations: [
-            { id: 'v1', vaccineName: 'MMR', dateAdministered: '2010-06-01', administeredBy: 'Dr. Carter' },
-            { id: 'v2', vaccineName: 'DTaP', dateAdministered: '2010-06-01', administeredBy: 'Dr. Carter' },
-            { id: 'v3', vaccineName: 'Hepatitis B', dateAdministered: '2012-08-15', administeredBy: 'Dr. Carter' },
-        ],
-        lastHealthCheckupDate: '2023-08-20',
-    },
-    '2': {
-        studentId: '2',
-        bloodType: 'A-',
-        allergies: ['None known'],
-        medicalConditions: ['None known'],
-        medications: [],
-        emergencyContact: { name: 'Tom Williams', relationship: 'Father', phone: '555-6789' },
-        physician: { name: 'Dr. Alan Grant', clinic: 'City Health Clinic', phone: '555-4321' },
-        vaccinations: [
-            { id: 'v4', vaccineName: 'MMR', dateAdministered: '2011-03-10', administeredBy: 'Dr. Grant' },
-            { id: 'v5', vaccineName: 'Varicella', dateAdministered: '2011-03-10', administeredBy: 'Dr. Grant' },
-        ],
-        lastHealthCheckupDate: '2024-01-15',
-    },
-    '3': {
-        studentId: '3',
-        bloodType: 'B+',
-        allergies: ['Lactose Intolerance'],
-        medicalConditions: [],
-        medications: [],
-        emergencyContact: { name: 'Susan Brown', relationship: 'Mother', phone: '555-7890' },
-        physician: { name: 'Dr. Emily Carter', clinic: 'Springfield Pediatrics', phone: '555-8765' },
-        vaccinations: [],
-        lastHealthCheckupDate: '2023-05-10',
-    }
-};
+import { mockAcademicData, mockHealthData } from '../../data/mockData';
 
 const InfoCard: React.FC<{ title: string; children: React.ReactNode; icon: React.ReactNode }> = ({ title, icon, children }) => (
     <div className="bg-white dark:bg-slate-800/60 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">

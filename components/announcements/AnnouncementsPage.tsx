@@ -3,14 +3,9 @@ import type { Announcement, User } from '../../types';
 import { Role } from '../../types';
 import { ArrowUturnLeftIcon, MegaphoneIcon, PlusIcon, PencilIcon, TrashIcon, UsersIcon } from '../Icons';
 import { CreateAnnouncementModal } from './CreateAnnouncementModal';
+import { mockAnnouncements } from '../../data/mockData';
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
-
-const initialAnnouncements: Announcement[] = [
-    { id: 'anc1', title: 'Welcome Back to School!', content: 'We are thrilled to welcome all students and staff back for the new academic year. Let\'s make it a great one!', author: 'Principal Thompson', date: '2024-08-15', audience: [Role.Student, Role.Parent, Role.Teacher] },
-    { id: 'anc2', title: 'Parent-Teacher Conference Day', content: 'Parent-teacher conferences will be held on October 5th. Please sign up for a slot with your child\'s teachers.', author: 'Admin Office', date: '2024-09-20', audience: [Role.Parent, Role.Teacher] },
-    { id: 'anc3', title: 'Upcoming Science Fair', content: 'The annual science fair is just around the corner! All students are encouraged to participate. Project submissions are due by November 1st.', author: 'Mr. Davis (Science Dept.)', date: '2024-09-25', audience: [Role.Student] },
-];
 
 const AudienceTag: React.FC<{ role: string }> = ({ role }) => {
     const style: Record<string, string> = {
@@ -23,7 +18,7 @@ const AudienceTag: React.FC<{ role: string }> = ({ role }) => {
 
 
 export const AnnouncementsPage: React.FC<{ onBackToDashboard: () => void; user: User }> = ({ onBackToDashboard, user }) => {
-    const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
+    const [announcements, setAnnouncements] = useState<Announcement[]>(mockAnnouncements);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
 
