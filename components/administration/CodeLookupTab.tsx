@@ -38,6 +38,7 @@ export const CodeLookupTab: React.FC<CodeLookupTabProps> = ({ school }) => {
                 .select('*')
                 .eq('code', code.trim().toUpperCase())
                 .eq('is_active', true)
+                .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
                 .single();
 
             if (codeError || !codeData) {

@@ -13,7 +13,8 @@ import type {
     Homework,
     Meeting,
     HealthRecord,
-    ParentMessage
+    ParentMessage,
+    TimetableEntry
 } from '../types';
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -32,11 +33,11 @@ export const mockStudents: Student[] = [
     { 
         id: '2', 
         student_id: 'S-2024002',
-        personal_info: { full_name: 'Bob Williams', date_of_birth: '2009-02-20', gender: 'Male', address: '456 Maple St, Springfield' },
-        academic_info: { grade: '9th Grade', enrollment_status: 'Enrolled' },
+        personal_info: { full_name: 'Alex Johnson', date_of_birth: '2011-02-20', gender: 'Male', address: '123 Oak Ave, Springfield' },
+        academic_info: { grade: '8th Grade', enrollment_status: 'Enrolled' },
         contact_info: { 
-            parent_guardian: { name: 'Sarah Williams', phone: '555-2345', email: 's.williams@email.com' },
-            emergency_contact: { name: 'Tom Williams', phone: '555-6789' }
+            parent_guardian: { name: 'John Johnson', phone: '555-1234', email: 'j.johnson@email.com' },
+            emergency_contact: { name: 'Jane Johnson', phone: '555-5678' }
         }
     },
     { 
@@ -92,6 +93,7 @@ export const mockEvents: SchoolEvent[] = [
     { id: 'evt2', title: 'Science Fair', description: 'Annual school-wide science fair.', startDate: '2024-11-15', endDate: '2024-11-16', category: EventCategory.Academic },
     { id: 'evt3', title: 'Winter Break', description: 'School closed for winter break.', startDate: '2024-12-23', endDate: '2025-01-03', category: EventCategory.Holiday },
     { id: 'evt4', title: 'Championship Football Game', description: 'Go Tigers!', startDate: '2024-10-18', category: EventCategory.Sports },
+    { id: 'evt5', title: 'Guest Speaker: AI in Education', description: 'Join us for an exciting talk in the auditorium.', startDate: getTodayDateString(), category: EventCategory.Academic },
 ];
 
 export const mockAuthUsers: AuthUser[] = [
@@ -108,8 +110,17 @@ export const mockAnnouncements: Announcement[] = [
 ];
 
 export const mockAttendanceRecords: AttendanceRecord[] = [
-    { id: 'att1', studentId: '1', date: getTodayDateString(), status: 'Present' },
-    { id: 'att2', studentId: '2', date: getTodayDateString(), status: 'Absent', notes: 'Feeling unwell' },
+    // For Alice (id: 1)
+    { id: 'att_p1_1', studentId: '1', date: '2024-10-25', status: 'Present' },
+    { id: 'att_p1_2', studentId: '1', date: '2024-10-24', status: 'Present' },
+    { id: 'att_p1_3', studentId: '1', date: '2024-10-23', status: 'Absent', notes: 'Feeling unwell' },
+    { id: 'att_p1_4', studentId: '1', date: '2024-10-22', status: 'Present' },
+    { id: 'att_p1_5', studentId: '1', date: '2024-10-21', status: 'Late', notes: 'Arrived at 9:15 AM' },
+    // For Alex (id: 2)
+    { id: 'att_p2_1', studentId: '2', date: '2024-10-25', status: 'Present' },
+    { id: 'att_p2_2', studentId: '2', date: '2024-10-24', status: 'Excused', notes: 'Doctor\'s appointment' },
+    { id: 'att_p2_3', studentId: '2', date: '2024-10-23', status: 'Present' },
+    // For Charlie (id: 3)
     { id: 'att3', studentId: '3', date: getTodayDateString(), status: 'Late', notes: 'Arrived at 9:15 AM' },
 ];
 
@@ -117,30 +128,15 @@ export const mockInvoices: Invoice[] = [
     { id: 'inv1', invoiceNumber: 'INV-2024-001', studentId: '1', status: 'Paid', items: [{id: 'i1', description: 'Annual Tuition Fee', amount: 5000}], totalAmount: 5000, issueDate: '2024-08-01', dueDate: '2024-09-01', paidDate: '2024-08-15' },
     { id: 'inv2', invoiceNumber: 'INV-2024-002', studentId: '2', status: 'Due', items: [{id: 'i2', description: 'Annual Tuition Fee', amount: 4800}, {id: 'i3', description: 'Lab Fee', amount: 150}], totalAmount: 4950, issueDate: '2024-08-01', dueDate: '2024-09-01' },
     { id: 'inv3', invoiceNumber: 'INV-2024-003', studentId: '3', status: 'Overdue', items: [{id: 'i4', description: 'Spring Semester Fee', amount: 2500}], totalAmount: 2500, issueDate: '2024-01-15', dueDate: '2024-02-15' },
-    { id: 'inv4', invoiceNumber: 'INV-2024-004', studentId: 'child1', status: 'Paid', items: [{id: 'i5', description: 'Annual Tuition Fee', amount: 5000}], totalAmount: 5000, issueDate: '2024-08-01', dueDate: '2024-09-01', paidDate: '2024-08-15' },
-    { id: 'inv5', invoiceNumber: 'INV-2024-005', studentId: 'child2', status: 'Due', items: [{id: 'i6', description: 'Annual Tuition Fee', amount: 4800}, {id: 'i7', description: 'Lab Fee', amount: 150}], totalAmount: 4950, issueDate: '2024-08-01', dueDate: '2024-09-01' },
-    { id: 'inv6', invoiceNumber: 'INV-2024-006', studentId: 'child1', status: 'Overdue', items: [{id: 'i8', description: 'Spring Semester Fee', amount: 2500}], totalAmount: 2500, issueDate: '2024-01-15', dueDate: '2024-02-15' },
+    { id: 'inv4', invoiceNumber: 'INV-2024-004', studentId: '1', status: 'Paid', items: [{id: 'i5', description: 'Annual Tuition Fee', amount: 5000}], totalAmount: 5000, issueDate: '2024-08-01', dueDate: '2024-09-01', paidDate: '2024-08-15' },
+    { id: 'inv5', invoiceNumber: 'INV-2024-005', studentId: '2', status: 'Due', items: [{id: 'i6', description: 'Annual Tuition Fee', amount: 4800}, {id: 'i7', description: 'Lab Fee', amount: 150}], totalAmount: 4950, issueDate: '2024-08-01', dueDate: '2024-09-01' },
+    { id: 'inv6', invoiceNumber: 'INV-2024-006', studentId: '1', status: 'Overdue', items: [{id: 'i8', description: 'Spring Semester Fee', amount: 2500}], totalAmount: 2500, issueDate: '2024-01-15', dueDate: '2024-02-15' },
 ];
 
 export const mockChildren: ChildProfile[] = [
     { id: 'child1', guardianId: 'user1', fullName: 'Alice Johnson', gender: 'Female', age: 15, grade: '10th Grade', hobbies: 'Reading, Painting', documents: [] },
     { id: 'child2', guardianId: 'user1', fullName: 'Alex Johnson', gender: 'Male', age: 13, grade: '8th Grade', hobbies: 'Soccer, Video Games', documents: [] },
 ];
-
-export const mockParentAttendance: { [childId: string]: AttendanceRecord[] } = {
-    'child1': [
-        { id: 'att1', studentId: 'child1', date: '2024-10-25', status: 'Present' },
-        { id: 'att2', studentId: 'child1', date: '2024-10-24', status: 'Present' },
-        { id: 'att3', studentId: 'child1', date: '2024-10-23', status: 'Absent', notes: 'Feeling unwell' },
-        { id: 'att4', studentId: 'child1', date: '2024-10-22', status: 'Present' },
-        { id: 'att5', studentId: 'child1', date: '2024-10-21', status: 'Late', notes: 'Arrived at 9:15 AM' },
-    ],
-    'child2': [
-        { id: 'att6', studentId: 'child2', date: '2024-10-25', status: 'Present' },
-        { id: 'att7', studentId: 'child2', date: '2024-10-24', status: 'Excused', notes: 'Doctor\'s appointment' },
-        { id: 'att8', studentId: 'child2', date: '2024-10-23', status: 'Present' },
-    ],
-};
 
 export const mockAcademicData: { [studentId: string]: CourseGrade[] } = {
     '1': [
@@ -152,20 +148,10 @@ export const mockAcademicData: { [studentId: string]: CourseGrade[] } = {
         { id: 'g6', courseName: 'Art', semester: 'Spring 2024', grade: 'A', score: 95 },
     ],
     '2': [
-        { id: 'g5', courseName: 'Biology', semester: 'Fall 2024', grade: 'C', score: 78 },
-        { id: 'g6', courseName: 'Geometry', semester: 'Fall 2024', grade: 'B', score: 88 },
-    ],
-    '3': [],
-    'child1': [
-        { id: 'g1', courseName: 'Algebra II', semester: 'Fall 2024', grade: 'A', score: 94 },
-        { id: 'g2', courseName: 'English Literature', semester: 'Fall 2024', grade: 'B', score: 85 },
-        { id: 'g3', courseName: 'World History', semester: 'Fall 2024', grade: 'A', score: 98 },
-        { id: 'g4', courseName: 'Physics', semester: 'Spring 2024', grade: 'B', score: 89 },
-    ],
-    'child2': [
         { id: 'g5', courseName: 'Pre-Algebra', semester: 'Fall 2024', grade: 'B', score: 88 },
         { id: 'g6', courseName: 'Life Science', semester: 'Fall 2024', grade: 'A', score: 92 },
     ],
+    '3': [],
     'student-rishabh-01': [
         { id: 'g7', courseName: 'Mathematics', semester: 'Fall 2024', grade: 'A', score: 95 },
         { id: 'g8', courseName: 'English', semester: 'Fall 2024', grade: 'A', score: 92 },
@@ -249,11 +235,11 @@ export const mockCourses: Course[] = [
 ];
 
 export const mockHomeworks: Homework[] = [
-    { id: 'HW1', title: 'Algebra Worksheet Chapter 3', instructions: 'Complete all odd-numbered problems from the worksheet attached.', subject: Subject.Mathematics, gradeLevel: '3rd Grade', assignedDate: '2024-10-20', dueDate: getTodayDateString(), attachmentLink: 'https://example.com/worksheet.pdf' },
-    { id: 'HW2', title: 'Essay: The Great Gatsby', instructions: 'Write a 500-word essay on the symbolism of the green light in The Great Gatsby.', subject: Subject.English, gradeLevel: '10th Grade', assignedDate: '2024-10-18', dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] },
-    { id: 'HW3', title: 'Lab Report: Photosynthesis', instructions: 'Submit your lab report based on last week\'s experiment.', subject: Subject.Science, gradeLevel: '9th Grade', assignedDate: '2024-10-22', dueDate: '2024-10-29' },
-    { id: 'HW4', title: 'World History Reading', instructions: 'Read Chapter 5 and answer the questions at the end.', subject: Subject.History, gradeLevel: '10th Grade', assignedDate: '2024-10-25', dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] },
-    { id: 'HW5', title: 'Past Due: Physics Problems', instructions: 'Complete problems 1-10 on page 50.', subject: Subject.Science, gradeLevel: '10th Grade', assignedDate: '2024-10-15', dueDate: '2024-10-22' },
+    { id: 'HW1', title: 'Algebra Worksheet Chapter 3', instructions: 'Complete all odd-numbered problems from the worksheet attached.', subject: Subject.Mathematics, gradeLevel: '3rd Grade', teacher: 'David Black', assignedDate: '2024-10-20', dueDate: getTodayDateString(), attachmentLink: 'https://example.com/worksheet.pdf' },
+    { id: 'HW2', title: 'Essay: The Great Gatsby', instructions: 'Write a 500-word essay on the symbolism of the green light in The Great Gatsby.', subject: Subject.English, gradeLevel: '10th Grade', teacher: 'Emily White', assignedDate: '2024-10-18', dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] },
+    { id: 'HW3', title: 'Lab Report: Photosynthesis', instructions: 'Submit your lab report based on last week\'s experiment.', subject: Subject.Science, gradeLevel: '9th Grade', teacher: 'Dr. Chen', assignedDate: '2024-10-22', dueDate: '2024-10-29' },
+    { id: 'HW4', title: 'World History Reading', instructions: 'Read Chapter 5 and answer the questions at the end.', subject: Subject.History, gradeLevel: '10th Grade', teacher: 'Laura Grey', assignedDate: '2024-10-25', dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] },
+    { id: 'HW5', title: 'Past Due: Physics Problems', instructions: 'Complete problems 1-10 on page 50.', subject: Subject.Science, gradeLevel: '10th Grade', teacher: 'Dr. Chen', assignedDate: '2024-10-15', dueDate: '2024-10-22' },
 ];
 
 export const mockMeetings: Meeting[] = [
@@ -349,49 +335,42 @@ export const subjectIcons: { [key in Subject]: string } = {
     [Subject.ForeignLanguage]: 'LanguageIcon',
 };
 
-type TimetableEntry = {
-    day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday';
-    time: string;
-    subject: Subject | 'Lunch' | 'Free Period';
-    teacher: string;
-};
-
 export const mockStudentTimetable: TimetableEntry[] = [
   // Monday
-  { day: 'Monday', time: '09:00 - 10:00', subject: Subject.Mathematics, teacher: 'David Black' },
-  { day: 'Monday', time: '10:00 - 11:00', subject: Subject.English, teacher: 'Emily White' },
-  { day: 'Monday', time: '11:00 - 12:00', subject: Subject.Science, teacher: 'Dr. Chen' },
-  { day: 'Monday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '' },
-  { day: 'Monday', time: '01:00 - 02:00', subject: Subject.History, teacher: 'Laura Grey' },
-  { day: 'Monday', time: '02:00 - 03:00', subject: Subject.Art, teacher: 'Clara Pink' },
+  { day: 'Monday', time: '09:00 - 10:00', subject: Subject.Mathematics, teacher: 'David Black', room: '101' },
+  { day: 'Monday', time: '10:00 - 11:00', subject: Subject.English, teacher: 'Emily White', room: '203' },
+  { day: 'Monday', time: '11:00 - 12:00', subject: Subject.Science, teacher: 'Dr. Chen', room: 'Lab A' },
+  { day: 'Monday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '', room: 'Cafeteria' },
+  { day: 'Monday', time: '01:00 - 02:00', subject: Subject.History, teacher: 'Laura Grey', room: '205' },
+  { day: 'Monday', time: '02:00 - 03:00', subject: Subject.Art, teacher: 'Clara Pink', room: 'Art Studio' },
   // Tuesday
-  { day: 'Tuesday', time: '09:00 - 10:00', subject: Subject.ForeignLanguage, teacher: 'Priya Sharma' },
-  { day: 'Tuesday', time: '10:00 - 11:00', subject: Subject.Mathematics, teacher: 'David Black' },
-  { day: 'Tuesday', time: '11:00 - 12:00', subject: Subject.Music, teacher: 'Leo Indigo' },
-  { day: 'Tuesday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '' },
-  { day: 'Tuesday', time: '01:00 - 02:00', subject: Subject.English, teacher: 'Emily White' },
-  { day: 'Tuesday', time: '02:00 - 03:00', subject: Subject.PhysicalEducation, teacher: 'Coach Hopper' },
+  { day: 'Tuesday', time: '09:00 - 10:00', subject: Subject.ForeignLanguage, teacher: 'Priya Sharma', room: '301' },
+  { day: 'Tuesday', time: '10:00 - 11:00', subject: Subject.Mathematics, teacher: 'David Black', room: '101' },
+  { day: 'Tuesday', time: '11:00 - 12:00', subject: Subject.Music, teacher: 'Leo Indigo', room: 'Music Room' },
+  { day: 'Tuesday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '', room: 'Cafeteria' },
+  { day: 'Tuesday', time: '01:00 - 02:00', subject: Subject.English, teacher: 'Emily White', room: '203' },
+  { day: 'Tuesday', time: '02:00 - 03:00', subject: Subject.PhysicalEducation, teacher: 'Coach Hopper', room: 'Gym' },
   // Wednesday
-  { day: 'Wednesday', time: '09:00 - 10:00', subject: Subject.Science, teacher: 'Dr. Chen' },
-  { day: 'Wednesday', time: '10:00 - 11:00', subject: Subject.History, teacher: 'Laura Grey' },
-  { day: 'Wednesday', time: '11:00 - 12:00', subject: Subject.Mathematics, teacher: 'David Black' },
-  { day: 'Wednesday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '' },
-  { day: 'Wednesday', time: '01:00 - 02:00', subject: Subject.ComputerScience, teacher: 'Robert Brown' },
-  { day: 'Wednesday', time: '02:00 - 03:00', subject: 'Free Period', teacher: '' },
+  { day: 'Wednesday', time: '09:00 - 10:00', subject: Subject.Science, teacher: 'Dr. Chen', room: 'Lab A' },
+  { day: 'Wednesday', time: '10:00 - 11:00', subject: Subject.History, teacher: 'Laura Grey', room: '205' },
+  { day: 'Wednesday', time: '11:00 - 12:00', subject: Subject.Mathematics, teacher: 'David Black', room: '101' },
+  { day: 'Wednesday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '', room: 'Cafeteria' },
+  { day: 'Wednesday', time: '01:00 - 02:00', subject: Subject.ComputerScience, teacher: 'Robert Brown', room: 'Tech Lab' },
+  { day: 'Wednesday', time: '02:00 - 03:00', subject: 'Free Period', teacher: '', room: 'Library' },
   // Thursday
-  { day: 'Thursday', time: '09:00 - 10:00', subject: Subject.English, teacher: 'Emily White' },
-  { day: 'Thursday', time: '10:00 - 11:00', subject: Subject.Art, teacher: 'Clara Pink' },
-  { day: 'Thursday', time: '11:00 - 12:00', subject: Subject.ForeignLanguage, teacher: 'Priya Sharma' },
-  { day: 'Thursday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '' },
-  { day: 'Thursday', time: '01:00 - 02:00', subject: Subject.Science, teacher: 'Dr. Chen' },
-  { day: 'Thursday', time: '02:00 - 03:00', subject: Subject.Mathematics, teacher: 'David Black' },
+  { day: 'Thursday', time: '09:00 - 10:00', subject: Subject.English, teacher: 'Emily White', room: '203' },
+  { day: 'Thursday', time: '10:00 - 11:00', subject: Subject.Art, teacher: 'Clara Pink', room: 'Art Studio' },
+  { day: 'Thursday', time: '11:00 - 12:00', subject: Subject.ForeignLanguage, teacher: 'Priya Sharma', room: '301' },
+  { day: 'Thursday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '', room: 'Cafeteria' },
+  { day: 'Thursday', time: '01:00 - 02:00', subject: Subject.Science, teacher: 'Dr. Chen', room: 'Lab A' },
+  { day: 'Thursday', time: '02:00 - 03:00', subject: Subject.Mathematics, teacher: 'David Black', room: '101' },
   // Friday
-  { day: 'Friday', time: '09:00 - 10:00', subject: Subject.PhysicalEducation, teacher: 'Coach Hopper' },
-  { day: 'Friday', time: '10:00 - 11:00', subject: Subject.History, teacher: 'Laura Grey' },
-  { day: 'Friday', time: '11:00 - 12:00', subject: Subject.English, teacher: 'Emily White' },
-  { day: 'Friday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '' },
-  { day: 'Friday', time: '01:00 - 02:00', subject: 'Free Period', teacher: '' },
-  { day: 'Friday', time: '02:00 - 03:00', subject: Subject.Music, teacher: 'Leo Indigo' },
+  { day: 'Friday', time: '09:00 - 10:00', subject: Subject.PhysicalEducation, teacher: 'Coach Hopper', room: 'Gym' },
+  { day: 'Friday', time: '10:00 - 11:00', subject: Subject.History, teacher: 'Laura Grey', room: '205' },
+  { day: 'Friday', time: '11:00 - 12:00', subject: Subject.English, teacher: 'Emily White', room: '203' },
+  { day: 'Friday', time: '12:00 - 01:00', subject: 'Lunch', teacher: '', room: 'Cafeteria' },
+  { day: 'Friday', time: '01:00 - 02:00', subject: 'Free Period', teacher: '', room: 'Library' },
+  { day: 'Friday', time: '02:00 - 03:00', subject: Subject.Music, teacher: 'Leo Indigo', room: 'Music Room' },
 ];
 
 export const mockParentMessages: ParentMessage[] = [

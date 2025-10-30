@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import type { Student, Course, Homework } from '../../types';
+import type { Student, Course, Homework, TimetableEntry, SchoolEvent } from '../../types';
 import { Subject } from '../../types';
 import { 
     ClockIcon, 
@@ -14,9 +14,10 @@ import {
     TrophyIcon,
     ComputerDesktopIcon,
     LanguageIcon,
-    SignalIcon
+    SignalIcon,
+    CalendarDaysIcon
 } from '../Icons';
-import { mockStudentTimetable, subjectColors, subjectIcons, mockCourses, mockHomeworks } from '../../data/mockData';
+import { mockStudentTimetable, subjectColors, subjectIcons, mockCourses, mockHomeworks, mockEvents } from '../../data/mockData';
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
 
@@ -26,7 +27,7 @@ const schoolDayStartHour = 9;
 const schoolDayEndHour = 15;
 
 const BriefingCard: React.FC<{ title: string; children: React.ReactNode; icon: React.ReactNode }> = ({ title, children, icon }) => (
-    <div className="bg-white dark:bg-slate-800/60 p-5 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+    <div className="bg-white dark:bg-slate-800/60 p-5 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 h-full">
         <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-slate-100 dark:bg-slate-700/50 rounded-lg text-slate-500 dark:text-slate-400">{icon}</div>
             <h4 className="font-semibold text-slate-500 dark:text-slate-400">{title}</h4>
@@ -51,14 +52,7 @@ const SubjectIcon: React.FC<{ subject: Subject, className: string }> = ({ subjec
     }
 };
 
-type TimetableEntry = {
-    day: string;
-    time: string;
-    subject: Subject | 'Lunch' | 'Free Period';
-    teacher: string;
-};
-
-type EnrichedCourse = Course & { teacher: string };
+type EnrichedCourse = Course & { teacher: string; room: string; };
 
 const ClassDetailModal: React.FC<{ course: EnrichedCourse | null; onClose: () => void }> = ({ course, onClose }) => {
     if (!course) return null;
@@ -72,7 +66,7 @@ const ClassDetailModal: React.FC<{ course: EnrichedCourse | null; onClose: () =>
                     <div className="flex items-center justify-between p-4 border-b rounded-t dark:border-slate-600">
                         <div>
                             <h3 className="text-xl font-bold text-slate-900 dark:text-white">{course.courseName}</h3>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">{course.teacher} • {course.subject}</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{course.teacher} • Room {course.room}</p>
                         </div>
                         <button type="button" onClick={onClose} className="p-1.5 text-slate-400 bg-transparent hover:bg-slate-200 rounded-lg dark:hover:bg-slate-600">
                             <XCircleIcon className="w-6 h-6" />
@@ -109,13 +103,66 @@ const ClassDetailModal: React.FC<{ course: EnrichedCourse | null; onClose: () =>
 };
 
 export const StudentTimetablePage: React.FC<{ student: Student }> = ({ student }) => {
+    const [view, setView] = useState<'week' | 'day'>('week');
     const [currentTime, setCurrentTime] = useState(new Date());
     const [selectedClass, setSelectedClass] = useState<EnrichedCourse | null>(null);
+    const [countdown, setCountdown] = useState('');
 
     useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 60000); // Update every minute
+        const timer = setInterval(() => setCurrentTime(new Date()), 1000); // Update every second for countdown
         return () => clearInterval(timer);
     }, []);
+
+    const { currentClass, nextClass, homeworkDueToday, eventsToday, todaySchedule } = useMemo(() => {
+        const day = currentTime.toLocaleString('en-US', { weekday: 'long' });
+        const nowMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+        
+        let current: TimetableEntry | null = null;
+        let next: TimetableEntry | null = null;
+
+        const schedule = mockStudentTimetable
+            .filter(slot => slot.day === day && mockCourses.find(c => c.subject === slot.subject)?.gradeLevel.includes(student.academic_info.grade))
+            .sort((a, b) => parseInt(a.time.split(':')[0]) - parseInt(b.time.split(':')[0]));
+
+        for (const slot of schedule) {
+            const [startTime, endTime] = slot.time.split(' - ');
+            const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
+            const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
+
+            if (nowMinutes >= startMinutes && nowMinutes < endMinutes) current = slot;
+            else if (nowMinutes < startMinutes && !next) next = slot;
+        }
+        
+        const dueToday = mockHomeworks.filter(hw => hw.dueDate === getTodayDateString() && hw.gradeLevel.includes(student.academic_info.grade));
+        const todaysEvents = mockEvents.filter(e => e.startDate === getTodayDateString());
+        
+        return { currentClass: current, nextClass: next, homeworkDueToday: dueToday, eventsToday: todaysEvents, todaySchedule: schedule };
+    }, [currentTime, student.academic_info.grade]);
+    
+    useEffect(() => {
+        if (!nextClass) {
+            setCountdown('');
+            return;
+        }
+        const now = new Date();
+        const [startHour, startMinute] = nextClass.time.split(' - ')[0].split(':').map(Number);
+        const nextClassTime = new Date();
+        nextClassTime.setHours(startHour, startMinute, 0, 0);
+        
+        const diff = nextClassTime.getTime() - now.getTime();
+        
+        if (diff <= 0) {
+            setCountdown('Starting now');
+            return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        setCountdown(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+
+    }, [currentTime, nextClass]);
 
     const timetableGrid = useMemo(() => {
         const grid = new Map<string, Map<string, TimetableEntry>>();
@@ -130,41 +177,16 @@ export const StudentTimetablePage: React.FC<{ student: Student }> = ({ student }
         return grid;
     }, [student.academic_info.grade]);
 
-    const { currentClass, nextClass, homeworkDueToday } = useMemo(() => {
-        const day = currentTime.toLocaleDateString('en-US', { weekday: 'long' });
-        const nowMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
-        
-        let current: TimetableEntry | null = null;
-        let next: TimetableEntry | null = null;
-
-        const todaySchedule = mockStudentTimetable
-            .filter(slot => slot.day === day)
-            .sort((a, b) => parseInt(a.time.split(':')[0]) - parseInt(b.time.split(':')[0]));
-
-        for (const slot of todaySchedule) {
-            const [startTime, endTime] = slot.time.split(' - ');
-            const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
-            const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
-
-            if (nowMinutes >= startMinutes && nowMinutes < endMinutes) current = slot;
-            else if (nowMinutes < startMinutes && !next) next = slot;
-        }
-
-        const dueToday = mockHomeworks.filter(hw => hw.dueDate === getTodayDateString() && hw.gradeLevel.includes(student.academic_info.grade));
-        
-        return { currentClass: current, nextClass: next, homeworkDueToday: dueToday };
-    }, [currentTime, student.academic_info.grade]);
-
     const handleClassClick = (entry: TimetableEntry) => {
         const courseDetails = mockCourses.find(c => c.subject === entry.subject && c.gradeLevel.includes(student.academic_info.grade));
         if (courseDetails) {
-            setSelectedClass({ ...courseDetails, teacher: entry.teacher });
+            setSelectedClass({ ...courseDetails, teacher: entry.teacher, room: entry.room });
         }
     };
     
     const totalMinutes = (schoolDayEndHour - schoolDayStartHour) * 60;
-    const elapsedMinutes = (currentTime.getHours() - schoolDayStartHour) * 60 + currentTime.getMinutes();
-    const progressPercent = Math.max(0, Math.min(100, (elapsedMinutes / totalMinutes) * 100));
+    const elapsedMinutes = Math.max(0, (currentTime.getHours() - schoolDayStartHour) * 60 + currentTime.getMinutes());
+    const progressPercent = Math.min(100, (elapsedMinutes / totalMinutes) * 100);
 
     return (
         <div className="space-y-6">
@@ -176,69 +198,111 @@ export const StudentTimetablePage: React.FC<{ student: Student }> = ({ student }
                 </div>
             </div>
 
-            <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200">Daily Briefing</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <BriefingCard title="In Progress" icon={<SignalIcon className="w-5 h-5"/>}>
-                    <p className="text-xl font-bold text-slate-900 dark:text-white truncate">{currentClass?.subject || "No class"}</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">{currentClass?.time || "You're on a break"}</p>
-                </BriefingCard>
-                 <BriefingCard title="Next Up" icon={<ClockIcon className="w-5 h-5"/>}>
-                    <p className="text-xl font-bold text-slate-900 dark:text-white truncate">{nextClass?.subject || "End of day"}</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">{nextClass?.time || "Enjoy your evening!"}</p>
-                </BriefingCard>
-                <BriefingCard title="Homework Due Today" icon={<ClipboardDocumentListIcon className="w-5 h-5"/>}>
-                    <p className="text-xl font-bold text-slate-900 dark:text-white">{homeworkDueToday.length} Assignment(s)</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 truncate">
-                        {homeworkDueToday.map(h => h.title).join(', ') || 'No homework due today!'}
-                    </p>
-                </BriefingCard>
+            <div className="p-6 bg-blue-50 dark:bg-slate-800/80 rounded-2xl shadow-inner-lg border border-blue-100 dark:border-slate-700/80">
+                <h3 className="font-bold text-lg text-slate-800 dark:text-slate-200 mb-4">Today's Briefing</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <BriefingCard title="Next Class In" icon={<ClockIcon className="w-5 h-5"/>}>
+                        <p className="text-3xl font-bold font-mono text-blue-600 dark:text-blue-400 truncate">{countdown || "All Done!"}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{nextClass?.subject || "No more classes"}</p>
+                    </BriefingCard>
+                    <BriefingCard title="In Progress" icon={<SignalIcon className="w-5 h-5"/>}>
+                        <p className="text-xl font-bold text-slate-900 dark:text-white truncate">{currentClass?.subject || "Break Time"}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{currentClass?.time || "Enjoy your break"}</p>
+                    </BriefingCard>
+                    <BriefingCard title="Assignments Due" icon={<ClipboardDocumentListIcon className="w-5 h-5"/>}>
+                        <p className="text-xl font-bold text-slate-900 dark:text-white">{homeworkDueToday.length} Assignment(s)</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{homeworkDueToday.map(h => h.title).join(', ') || 'Nothing due today!'}</p>
+                    </BriefingCard>
+                    <BriefingCard title="Today's Events" icon={<CalendarDaysIcon className="w-5 h-5"/>}>
+                         <p className="text-xl font-bold text-slate-900 dark:text-white">{eventsToday.length} Event(s)</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{eventsToday.map(e => e.title).join(', ') || 'No events scheduled'}</p>
+                    </BriefingCard>
+                </div>
             </div>
             
-            <div className="relative overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
-                <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400 table-fixed">
-                    <thead className="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-700 dark:text-slate-300">
-                        <tr>
-                            <th scope="col" className="px-4 py-3 w-32">Time</th>
-                            {daysOfWeek.map(day => (
-                                <th key={day} scope="col" className="px-4 py-3 text-center">{day}</th>
+            <div className="flex items-center gap-2">
+                <button onClick={() => setView('week')} className={`px-4 py-2 text-sm font-semibold rounded-lg ${view === 'week' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200'}`}>Week View</button>
+                <button onClick={() => setView('day')} className={`px-4 py-2 text-sm font-semibold rounded-lg ${view === 'day' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200'}`}>Day View</button>
+            </div>
+            
+            {view === 'week' ? (
+                 <div className="relative overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+                    <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400 table-fixed">
+                        <thead className="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-700 dark:text-slate-300">
+                            <tr>
+                                <th scope="col" className="px-4 py-3 w-32">Time</th>
+                                {daysOfWeek.map(day => <th key={day} scope="col" className="px-4 py-3 text-center">{day}</th>)}
+                            </tr>
+                        </thead>
+                        <tbody className="relative">
+                            {progressPercent > 0 && progressPercent < 100 && currentTime.getDay() >= 1 && currentTime.getDay() <= 5 && (
+                                <div className="absolute w-full h-0.5 bg-red-500 z-10" style={{ top: `calc(${progressPercent}% + 1px)` }}>
+                                    <div className="absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500"></div>
+                                </div>
+                            )}
+                            {timeSlots.map(time => (
+                                <tr key={time} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700">
+                                    <th scope="row" className="px-4 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">{time}</th>
+                                    {daysOfWeek.map(day => {
+                                        const entry = timetableGrid.get(time)?.get(day);
+                                        const subjectClass = entry?.subject && Subject[entry.subject as keyof typeof Subject] ? `bg-gradient-to-br ${subjectColors[entry.subject as Subject]}` : 'bg-transparent';
+                                        const nonSubjectClasses = 'bg-slate-50 text-slate-400 dark:bg-slate-800/50 dark:text-slate-500';
+
+                                        return (
+                                            <td key={`${time}-${day}`} className="px-1 py-1 text-center border-l border-slate-100 dark:border-slate-700/50">
+                                                {entry ? (
+                                                    <button onClick={() => handleClassClick(entry)} className={`w-full h-full rounded-lg p-2 flex flex-col justify-center items-start text-left transition-transform hover:scale-105 ${entry.subject === 'Lunch' || entry.subject === 'Free Period' ? nonSubjectClasses : subjectClass}`}>
+                                                        <div className="w-full flex justify-between items-start">
+                                                            <p className="font-bold text-xs sm:text-sm">{entry.subject}</p>
+                                                            {entry.subject !== 'Lunch' && entry.subject !== 'Free Period' && <SubjectIcon subject={entry.subject} className="w-4 h-4 opacity-70 hidden sm:block"/>}
+                                                        </div>
+                                                        {entry.teacher && <p className="text-xs opacity-80 mt-1 w-full">{entry.teacher}</p>}
+                                                    </button>
+                                                ) : <div className="h-20"></div>}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
                             ))}
-                        </tr>
-                    </thead>
-                    <tbody className="relative">
-                        {progressPercent > 0 && progressPercent < 100 && currentTime.getDay() >= 1 && currentTime.getDay() <= 5 && (
-                             <div className="absolute w-full h-0.5 bg-red-500 z-10" style={{ top: `${progressPercent}%` }}>
-                                <div className="absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500"></div>
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div className="relative p-6 bg-white dark:bg-slate-800/60 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+                    {progressPercent > 0 && progressPercent < 100 && (
+                        <div className="absolute left-0 right-0 h-0.5 bg-red-500 z-10" style={{ top: `calc(3rem + ${progressPercent}%)` }}>
+                            <div className="absolute -left-1 -top-1 h-2.5 w-2.5 rounded-full bg-red-500"></div>
+                            <span className="absolute left-3 -top-2.5 text-xs font-mono bg-red-500 text-white px-1.5 py-0.5 rounded-full">{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                    )}
+                    <div className="space-y-4">
+                        {todaySchedule.length > 0 ? todaySchedule.map((entry, index) => {
+                             const subjectClass = entry?.subject && Subject[entry.subject as keyof typeof Subject] ? `bg-gradient-to-br ${subjectColors[entry.subject as Subject]}` : 'bg-transparent';
+                             const nonSubjectClasses = 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
+                            
+                            return (
+                                <div key={index} className="flex items-center gap-4">
+                                    <div className="w-24 text-right">
+                                        <p className="font-semibold text-slate-800 dark:text-slate-200">{entry.time.split(' - ')[0]}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">{entry.time.split(' - ')[1]}</p>
+                                    </div>
+                                    <button onClick={() => handleClassClick(entry)} className={`flex-1 p-4 rounded-lg flex justify-between items-center transition-shadow hover:shadow-md ${entry.subject === 'Lunch' || entry.subject === 'Free Period' ? nonSubjectClasses : subjectClass}`}>
+                                        <div>
+                                            <p className="font-bold">{entry.subject}</p>
+                                            <p className="text-sm opacity-90">{entry.teacher} • Room {entry.room}</p>
+                                        </div>
+                                        {entry.subject !== 'Lunch' && entry.subject !== 'Free Period' && <SubjectIcon subject={entry.subject} className="w-6 h-6 opacity-80"/>}
+                                    </button>
+                                </div>
+                            )
+                        }) : (
+                             <div className="text-center py-16 text-slate-500 dark:text-slate-400">
+                                <p className="font-semibold">No classes scheduled for today.</p>
                             </div>
                         )}
-                        {timeSlots.map(time => (
-                            <tr key={time} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700">
-                                <th scope="row" className="px-4 py-4 font-medium text-slate-900 dark:text-white whitespace-nowrap">{time}</th>
-                                {daysOfWeek.map(day => {
-                                    const entry = timetableGrid.get(time)?.get(day);
-                                    const subjectClass = entry?.subject && Subject[entry.subject as keyof typeof Subject]
-                                        ? `text-white ${subjectColors[entry.subject as Subject]}`
-                                        : 'bg-transparent';
-                                    const nonSubjectClasses = 'bg-slate-50 text-slate-400 dark:bg-slate-800/50 dark:text-slate-500';
-
-                                    return (
-                                        <td key={`${time}-${day}`} className="px-1 py-1 text-center border-l border-slate-100 dark:border-slate-700/50">
-                                            {entry ? (
-                                                <button onClick={() => handleClassClick(entry)} className={`w-full h-full rounded-lg p-2 flex flex-col justify-center items-center text-left transition-transform hover:scale-105 ${entry.subject === 'Lunch' || entry.subject === 'Free Period' ? nonSubjectClasses : subjectClass}`}>
-                                                    <div className="w-full flex justify-between items-start">
-                                                        <p className="font-bold text-xs sm:text-sm">{entry.subject}</p>
-                                                         {entry.subject !== 'Lunch' && entry.subject !== 'Free Period' && <SubjectIcon subject={entry.subject} className="w-4 h-4 opacity-70 hidden sm:block"/>}
-                                                    </div>
-                                                    {entry.teacher && <p className="text-xs opacity-80 mt-1 w-full">{entry.teacher}</p>}
-                                                </button>
-                                            ) : <div className="h-20"></div>}
-                                        </td>
-                                    );
-                                })}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                    </div>
+                </div>
+            )}
             {selectedClass && <ClassDetailModal course={selectedClass} onClose={() => setSelectedClass(null)} />}
         </div>
     );

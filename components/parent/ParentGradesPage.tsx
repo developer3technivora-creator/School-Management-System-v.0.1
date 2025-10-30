@@ -1,20 +1,52 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowUturnLeftIcon, ChartBarIcon, TrophyIcon } from '../Icons';
 import type { CourseGrade, ChildProfile } from '../../types';
-import { mockChildren, mockAcademicData } from '../../data/mockData';
+import { mockChildren, mockAcademicData, mockStudents } from '../../data/mockData';
 
 const gradeToPoints: Record<CourseGrade['grade'], number> = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0 };
-const gradeToColor: Record<CourseGrade['grade'], string> = {
-    'A': 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
-    'B': 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-    'C': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
-    'D': 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300',
-    'F': 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
+const gradeToColorStyles: Record<CourseGrade['grade'], { text: string; bg: string; border: string; }> = {
+    'A': { text: 'text-green-600 dark:text-green-300', bg: 'bg-green-50 dark:bg-green-900/30', border: 'border-green-500' },
+    'B': { text: 'text-blue-600 dark:text-blue-300', bg: 'bg-blue-50 dark:bg-blue-900/30', border: 'border-blue-500' },
+    'C': { text: 'text-yellow-600 dark:text-yellow-400', bg: 'bg-yellow-50 dark:bg-yellow-900/30', border: 'border-yellow-500' },
+    'D': { text: 'text-orange-600 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-900/30', border: 'border-orange-500' },
+    'F': { text: 'text-red-600 dark:text-red-400', bg: 'bg-red-50 dark:bg-red-900/30', border: 'border-red-500' },
+};
+
+const GradeCard: React.FC<{ grade: CourseGrade }> = ({ grade }) => {
+    const styles = gradeToColorStyles[grade.grade];
+    return (
+        <div className={`p-5 rounded-xl shadow-sm border ${styles.bg} border-l-4 ${styles.border}`}>
+            <div className="flex justify-between items-start">
+                <div>
+                    <h4 className="font-bold text-slate-800 dark:text-slate-100">{grade.courseName}</h4>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{grade.semester}</p>
+                </div>
+                <div className="text-right">
+                    <p className={`text-3xl font-bold ${styles.text}`}>{grade.grade}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{grade.score}%</p>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export const ParentGradesPage: React.FC<{ onBackToDashboard: () => void }> = ({ onBackToDashboard }) => {
     const [selectedChildId, setSelectedChildId] = useState<string>(mockChildren[0].id);
-    const selectedChildGrades = mockAcademicData[selectedChildId] || [];
+    
+    const childToStudentIdMap = useMemo(() => {
+        const mapping = new Map<string, string>();
+        mockChildren.forEach(child => {
+            const student = mockStudents.find(s => s.personal_info.full_name === child.fullName);
+            if (student) mapping.set(child.id, student.id);
+        });
+        return mapping;
+    }, []);
+
+    const selectedChildGrades = useMemo(() => {
+        const studentId = childToStudentIdMap.get(selectedChildId);
+        if (!studentId) return [];
+        return mockAcademicData[studentId] || [];
+    }, [selectedChildId, childToStudentIdMap]);
 
     const gpa = useMemo(() => {
         if (selectedChildGrades.length === 0) return 'N/A';
@@ -23,86 +55,54 @@ export const ParentGradesPage: React.FC<{ onBackToDashboard: () => void }> = ({ 
     }, [selectedChildGrades]);
     
     return (
-        <div className="min-h-screen bg-slate-100 dark:bg-slate-950 p-4 sm:p-6 lg:p-8 transition-colors duration-300">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div className="flex items-center gap-3">
-                        <ChartBarIcon className="w-10 h-10 text-blue-500" />
-                        <div>
-                            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-                                Grades & Reports
-                            </h1>
-                            <p className="mt-1 text-lg text-slate-500 dark:text-slate-400">
-                                Access your children's academic performance and report cards.
-                            </p>
-                        </div>
+        <div className="space-y-6">
+             <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-500 rounded-xl">
+                        <ChartBarIcon className="w-8 h-8"/>
                     </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Grades & Reports</h1>
+                        <p className="text-slate-500 dark:text-slate-400">View academic performance for your children.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 p-2 bg-slate-200 dark:bg-slate-800 rounded-xl">
+                {mockChildren.map(child => (
                     <button
-                        onClick={onBackToDashboard}
-                        className="flex items-center justify-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-600 text-sm font-medium rounded-lg text-slate-700 dark:text-slate-300 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors duration-200"
+                        key={child.id}
+                        onClick={() => setSelectedChildId(child.id)}
+                        className={`px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-300 flex items-center gap-2 ${selectedChildId === child.id ? 'bg-white dark:bg-slate-700 shadow-md' : 'text-slate-600 dark:text-slate-300'}`}
                     >
-                        <ArrowUturnLeftIcon className="h-5 w-5" />
-                        <span>Dashboard</span>
+                         <img className="h-6 w-6 rounded-full" src={`https://api.dicebear.com/8.x/adventurer/svg?seed=${child.fullName.split(' ')[0]}`} alt={child.fullName} />
+                        {child.fullName}
                     </button>
+                ))}
+            </div>
+
+            <div className="p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 flex items-center gap-4">
+                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-500 rounded-full">
+                    <TrophyIcon className="w-10 h-10"/>
                 </div>
-
-                <div className="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl dark:border dark:border-slate-700 p-6">
-                    <div className="mb-6">
-                        <label htmlFor="child-selector" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Viewing grades for:</label>
-                        <select
-                            id="child-selector"
-                            value={selectedChildId}
-                            onChange={(e) => setSelectedChildId(e.target.value)}
-                            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-1/3 p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
-                        >
-                            {mockChildren.map(child => (
-                                <option key={child.id} value={child.id}>{child.fullName}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="mb-8 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-4">
-                        <div className="p-3 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-500 rounded-lg">
-                            <TrophyIcon className="w-8 h-8"/>
-                        </div>
-                        <div>
-                            <p className="font-semibold text-slate-500 dark:text-slate-400">Overall GPA</p>
-                            <p className="text-3xl font-bold text-slate-900 dark:text-white">{gpa}</p>
-                        </div>
-                    </div>
-
-                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4">Course Grades</h3>
-                    <div className="relative overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
-                        <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400">
-                            <thead className="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-700 dark:text-slate-300">
-                                <tr>
-                                    <th scope="col" className="px-6 py-3">Course Name</th>
-                                    <th scope="col" className="px-6 py-3">Semester</th>
-                                    <th scope="col" className="px-6 py-3 text-center">Score</th>
-                                    <th scope="col" className="px-6 py-3 text-center">Grade</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {selectedChildGrades.length > 0 ? selectedChildGrades.map((g) => (
-                                    <tr key={g.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700">
-                                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">{g.courseName}</td>
-                                        <td className="px-6 py-4">{g.semester}</td>
-                                        <td className="px-6 py-4 text-center">{g.score}%</td>
-                                        <td className="px-6 py-4 text-center">
-                                            <span className={`px-3 py-1 text-sm font-bold rounded-full ${gradeToColor[g.grade]}`}>
-                                                {g.grade}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                )) : (
-                                    <tr>
-                                        <td colSpan={4} className="text-center py-8 text-slate-500 dark:text-slate-400">No grades have been recorded yet for this child.</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
+                <div>
+                    <p className="font-semibold text-slate-500 dark:text-slate-400">Overall GPA</p>
+                    <p className="text-4xl font-extrabold text-slate-900 dark:text-white">{gpa}</p>
                 </div>
+            </div>
+
+            <div>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-4">Course Grades</h3>
+                {selectedChildGrades.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {selectedChildGrades.map((g) => <GradeCard key={g.id} grade={g} />)}
+                    </div>
+                ) : (
+                    <div className="text-center py-12 text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800/60 rounded-xl border border-dashed">
+                        <p className="font-semibold">No Grades Recorded</p>
+                        <p>Grades for this child have not been posted yet.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

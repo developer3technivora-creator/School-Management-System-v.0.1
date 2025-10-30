@@ -11,11 +11,13 @@ interface AddEditHomeworkModalProps {
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
 
+// FIX: Add 'teacher' property to initial state to match Homework type.
 const initialFormState: Omit<Homework, 'id'> = {
     title: '',
     instructions: '',
     subject: Subject.Mathematics,
     gradeLevel: '',
+    teacher: '',
     assignedDate: getTodayDateString(),
     dueDate: '',
     attachmentLink: '',
@@ -38,6 +40,8 @@ export const AddEditHomeworkModal: React.FC<AddEditHomeworkModalProps> = ({ isOp
         if (!formData.title.trim()) newErrors.title = "Title is required.";
         if (!formData.gradeLevel.trim()) newErrors.gradeLevel = "Grade Level is required.";
         if (!formData.dueDate) newErrors.dueDate = "Due Date is required.";
+        // FIX: Add validation for the new 'teacher' field.
+        if (!formData.teacher.trim()) newErrors.teacher = "Teacher name is required.";
         
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -81,6 +85,10 @@ export const AddEditHomeworkModal: React.FC<AddEditHomeworkModalProps> = ({ isOp
                             <InputField name="gradeLevel" label="Grade Level" value={formData.gradeLevel} onChange={handleChange} error={errors.gradeLevel} />
                             <InputField name="dueDate" label="Due Date" type="date" value={formData.dueDate} onChange={handleChange} error={errors.dueDate} />
                             <InputField name="assignedDate" label="Assigned Date" type="date" value={formData.assignedDate} onChange={handleChange} disabled />
+                            {/* FIX: Add input field for 'teacher' to be included in the form. */}
+                            <div className="md:col-span-2">
+                                <InputField name="teacher" label="Teacher" value={formData.teacher} onChange={handleChange} error={errors.teacher} />
+                            </div>
                             <div className="md:col-span-2">
                                 <InputField name="attachmentLink" label="Attachment Link (Optional)" value={formData.attachmentLink || ''} onChange={handleChange} />
                             </div>

@@ -12,7 +12,12 @@ export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> 
     const [students, setStudents] = useState<Student[]>(mockStudents);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+    
+    // Filters State
     const [searchTerm, setSearchTerm] = useState('');
+    const [gradeFilter, setGradeFilter] = useState('All');
+    const [statusFilter, setStatusFilter] = useState('All');
+    
     const [viewingStudent, setViewingStudent] = useState<Student | null>(null);
 
     const [isAcademicsModalOpen, setIsAcademicsModalOpen] = useState(false);
@@ -32,8 +37,9 @@ export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> 
     };
 
     const handleDeleteStudent = (studentId: string) => {
-        // In a real app, you'd show a confirmation modal first
-        setStudents(prev => prev.filter(s => s.id !== studentId));
+        if (window.confirm('Are you sure you want to delete this student? This action cannot be undone.')) {
+            setStudents(prev => prev.filter(s => s.id !== studentId));
+        }
     };
 
     const handleViewAcademics = (student: Student) => {
@@ -60,16 +66,31 @@ export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> 
         }
         setIsModalOpen(false);
     };
+    
+    const gradeLevels = useMemo(() => {
+        const grades = new Set(students.map(s => s.academic_info.grade));
+        return Array.from(grades).sort((a, b) => (parseInt(a) || 0) - (parseInt(b) || 0));
+    }, [students]);
+    const enrollmentStatuses: Student['academic_info']['enrollment_status'][] = ['Enrolled', 'Withdrawn', 'Graduated', 'Pending'];
+
 
     const filteredStudents = useMemo(() => {
-        return students.filter(student =>
-            // FIX: Changed property access from camelCase to snake_case and to use nested structure.
-            student.personal_info.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            // FIX: Changed property access from camelCase to snake_case.
-            student.student_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            student.academic_info.grade.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [students, searchTerm]);
+        return students
+            .filter(student => {
+                if (gradeFilter !== 'All' && student.academic_info.grade !== gradeFilter) {
+                    return false;
+                }
+                if (statusFilter !== 'All' && student.academic_info.enrollment_status !== statusFilter) {
+                    return false;
+                }
+                const lowercasedFilter = searchTerm.toLowerCase();
+                if (!lowercasedFilter) return true;
+                return (
+                    student.personal_info.full_name.toLowerCase().includes(lowercasedFilter) ||
+                    student.student_id.toLowerCase().includes(lowercasedFilter)
+                );
+            });
+    }, [students, searchTerm, gradeFilter, statusFilter]);
 
     if (viewingStudent) {
         return <StudentDetailPage student={viewingStudent} onBack={() => setViewingStudent(null)} />;
@@ -105,16 +126,34 @@ export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> 
 
                 <div className="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl dark:border dark:border-slate-700 p-6">
                      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                        <input
-                            type="text"
-                            placeholder="Search by name, ID, or grade..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full md:w-1/3 peer bg-slate-100/50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-lg block p-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors"
-                        />
+                        <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+                            <input
+                                type="text"
+                                placeholder="Search by name or ID..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full sm:w-64 bg-slate-100/50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-lg block p-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
+                            />
+                            <select
+                                value={gradeFilter}
+                                onChange={(e) => setGradeFilter(e.target.value)}
+                                className="w-full sm:w-auto bg-slate-100/50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-lg block p-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
+                            >
+                                <option value="All">All Grades</option>
+                                {gradeLevels.map(grade => <option key={grade} value={grade}>{grade}</option>)}
+                            </select>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className="w-full sm:w-auto bg-slate-100/50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-lg block p-3 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500"
+                            >
+                                <option value="All">All Statuses</option>
+                                {enrollmentStatuses.map(status => <option key={status} value={status}>{status}</option>)}
+                            </select>
+                        </div>
                         <button
                             onClick={openAddModal}
-                            className="flex items-center justify-center gap-2 w-full md:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                            className="flex items-center justify-center gap-2 w-full md:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700"
                         >
                             <PlusIcon className="h-5 w-5" />
                             <span>Add New Student</span>

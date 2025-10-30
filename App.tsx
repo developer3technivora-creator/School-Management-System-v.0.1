@@ -8,6 +8,7 @@ import { Role as RoleEnum } from './types';
 import { SunIcon, MoonIcon } from './components/Icons';
 import { SchoolDashboardPage } from './components/school/SchoolDashboardPage';
 import { StudentDashboardPage } from './components/student/StudentDashboardPage';
+import { TeacherDashboardPage } from './components/teacher/TeacherDashboardPage';
 
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -64,6 +65,9 @@ const AppContent: React.FC = () => {
     }
     if (selectedRole === RoleEnum.Student) {
         return <StudentDashboardPage user={user} role={selectedRole} onLogout={handleLogout} onBackToRoles={handleBackToRoles} />;
+    }
+     if (selectedRole === RoleEnum.Teacher) {
+        return <TeacherDashboardPage user={user} role={selectedRole} onLogout={handleLogout} onBackToRoles={handleBackToRoles} />;
     }
     
     if (!selectedRole) {

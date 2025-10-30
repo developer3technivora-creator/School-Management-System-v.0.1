@@ -134,6 +134,15 @@ export interface SchoolEvent {
     category: EventCategory;
 }
 
+// TIMETABLE TYPES
+export interface TimetableEntry {
+    day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday';
+    time: string;
+    subject: Subject | 'Lunch' | 'Free Period';
+    teacher: string;
+    room: string;
+}
+
 // COURSE MANAGEMENT TYPES
 export enum Subject {
     Mathematics = 'Mathematics',
@@ -163,6 +172,7 @@ export interface Homework {
     instructions: string;
     subject: Subject;
     gradeLevel: string;
+    teacher: string;
     assignedDate: string;
     dueDate: string;
     attachmentLink?: string;
@@ -232,7 +242,7 @@ export interface GuardianProfile {
 
 export interface ChildDocument {
     id: string;
-    type: 'Birth Certificate' | 'ID Proof' | 'Previous Report Card';
+    type: string;
     name: string;
     url?: string;
     file: File;
