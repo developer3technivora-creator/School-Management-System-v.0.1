@@ -96,7 +96,8 @@ export const CourseManagementPage: React.FC<{ onBackToDashboard: () => void }> =
             );
     }, [courses, searchTerm, selectedSubject]);
 
-    const allSubjects: Subject[] = [...new Set(courses.map(c => c.subject))];
+    // FIX: Using Array.from(new Set(...)) to ensure correct type inference, resolving an issue where the spread syntax resulted in 'unknown[]'.
+    const allSubjects: Subject[] = Array.from(new Set(courses.map(c => c.subject)));
 
     return (
         <div className="min-h-screen p-4 sm:p-6 lg:p-8 bg-slate-100 dark:bg-slate-950">

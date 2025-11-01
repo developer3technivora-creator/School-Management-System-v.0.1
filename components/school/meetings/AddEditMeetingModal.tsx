@@ -49,11 +49,7 @@ export const AddEditMeetingModal: React.FC<AddEditMeetingModalProps> = ({ isOpen
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (validate()) {
-            onSave({
-                ...formData,
-                // @ts-ignore
-                id: meeting?.id || '',
-            });
+            onSave(formData);
         }
     };
 

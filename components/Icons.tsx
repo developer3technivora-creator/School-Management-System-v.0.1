@@ -182,6 +182,19 @@ export const XCircleIcon: React.FC<IconProps> = (props) => (
 export const InformationCircleIcon: React.FC<IconProps> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
 );
+export const PercentIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 7.5C7.5 6.119 8.619 5 10 5s2.5 1.119 2.5 2.5S11.381 10 10 10c-1.381 0-2.5-1.119-2.5-2.5Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 16.5c0-1.381-1.119-2.5-2.5-2.5s-2.5 1.119-2.5 2.5 1.119 2.5 2.5 2.5 2.5-1.119 2.5-2.5Z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6" />
+  </svg>
+);
+export const UserMinusIcon: React.FC<IconProps> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+    </svg>
+);
+
 
 // Financial Icons
 export const DocumentTextIcon: React.FC<IconProps> = (props) => (

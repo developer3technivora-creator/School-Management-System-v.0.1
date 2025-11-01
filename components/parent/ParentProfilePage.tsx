@@ -290,8 +290,16 @@ export const ParentProfilePage: React.FC<ParentProfilePageProps> = ({ user, onLo
 
     const handlePrimaryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { setIsDirty(true); setPrimaryGuardian(prev => ({...prev, [e.target.name]: e.target.value })); }
     const handleSecondaryChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { setIsDirty(true); setSecondaryGuardian(prev => ({...prev, [e.target.name]: e.target.value })); }
-    // FIX: Correctly update child profile state immutably.
-    const handleChildChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { setIsDirty(true); const { name, value } = e.target; const newChildren = [...children]; (newChildren[index] as any)[name] = value; setChildren(newChildren); }
+    const handleChildChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setIsDirty(true);
+        const { name, value } = e.target;
+        setChildren(prev => prev.map((child, i) => {
+            if (i !== index) return child;
+            // Handle age specifically to convert to number or empty string
+            const updatedValue = name === 'age' ? (value === '' ? '' : Number(value)) : value;
+            return { ...child, [name]: updatedValue };
+        }));
+    };
     const addChild = () => { setIsDirty(true); setChildren([...children, { id: `c${Date.now()}`, guardianId: user.id, fullName: '', gender: '', age: '', grade: '', hobbies: '', documents: [] }]); };
     const removeChild = (index: number) => { setIsDirty(true); setChildren(children.filter((_, i) => i !== index)); }
 

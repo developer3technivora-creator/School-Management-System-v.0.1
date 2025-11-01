@@ -118,8 +118,9 @@ export const AdmittedStudentsTab: React.FC<AdmittedStudentsTabProps> = ({ school
             const parentMap = new Map((parentsResult.data || []).map(p => [p.user_id, p]));
 
             const combinedData = enrollments.map(enrollment => {
-                const child = childMap.get(enrollment.student_id);
-                const parent = parentMap.get(enrollment.parent_user_id);
+                // FIX: Explicitly type `child` and `parent` as `any` to resolve property access errors on what is inferred as `unknown`.
+                const child: any = childMap.get(enrollment.student_id);
+                const parent: any = parentMap.get(enrollment.parent_user_id);
                 return {
                     enrollment_id: enrollment.id,
                     unique_student_id: enrollment.student_unique_id,

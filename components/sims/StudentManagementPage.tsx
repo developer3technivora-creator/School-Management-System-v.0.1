@@ -68,7 +68,8 @@ export const StudentManagementPage: React.FC<{ onBackToDashboard: () => void }> 
     };
     
     const gradeLevels = useMemo(() => {
-        const grades = new Set(students.map(s => s.academic_info.grade));
+        // FIX: Explicitly type `new Set<string>` to ensure correct type inference for the `grades` Set.
+        const grades = new Set<string>(students.map(s => s.academic_info.grade));
         return Array.from(grades).sort((a, b) => (parseInt(a) || 0) - (parseInt(b) || 0));
     }, [students]);
     const enrollmentStatuses: Student['academic_info']['enrollment_status'][] = ['Enrolled', 'Withdrawn', 'Graduated', 'Pending'];

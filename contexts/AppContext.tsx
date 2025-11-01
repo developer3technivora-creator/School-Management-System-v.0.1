@@ -126,12 +126,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     const { error } = await action();
     setLoading(false);
     if (error) {
-      console.error('Auth Error:', error.message);
+      const errorMessage = (error && typeof error.message === 'string') ? error.message : 'An unknown authentication error occurred.';
+      
       // Provide a more user-friendly message for common auth errors
-      if (error.message === 'Invalid login credentials') {
+      if (errorMessage === 'Invalid login credentials') {
         return 'Incorrect email or password. Please check your credentials and try again.';
       }
-      return error.message;
+      return errorMessage;
     }
     return null;
   };

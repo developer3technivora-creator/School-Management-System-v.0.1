@@ -126,7 +126,7 @@ export const FacultyManagementPage: React.FC<{ onBackToDashboard: () => void }> 
                     <StatCard title="Support Staff" value={stats.support} icon={<BriefcaseIcon className="w-6 h-6"/>} />
                 </div>
                 
-                <div className="bg-white dark:bg-slate-800/60 rounded-2xl shadow-2xl dark:border dark:border-slate-700 p-6">
+                <div className="bg-white dark:bg-slate-800/60 rounded-2xl shadow-xl dark:border dark:border-slate-700 p-6">
                     <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <div className="relative w-full md:w-80">
                             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"><MagnifyingGlassIcon className="w-5 h-5 text-slate-400" /></div>

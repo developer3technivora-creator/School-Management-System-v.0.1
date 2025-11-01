@@ -14,7 +14,11 @@ import type {
     Meeting,
     HealthRecord,
     ParentMessage,
-    TimetableEntry
+    TimetableEntry,
+    Vehicle, 
+    BusRoute, 
+    RouteStop, 
+    TransportAlert
 } from '../types';
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
@@ -51,30 +55,6 @@ export const mockStudents: Student[] = [
         }
     },
 ];
-
-export const rishabhSharma: Student = {
-    id: 'student-rishabh-01',
-    student_id: 'SMSR-GJFI-2025-0001',
-    personal_info: {
-        full_name: 'Rishabh sharma',
-        date_of_birth: new Date(new Date().setFullYear(new Date().getFullYear() - 8)).toISOString().split('T')[0],
-        gender: 'Male',
-        address: '123 Cricket Lane, Springfield',
-    },
-    academic_info: {
-        grade: '3',
-        enrollment_status: 'Enrolled',
-        admission_status: {
-            schoolName: 'SMSRA',
-            studentId: 'SMSR-GJFI-2025-0001',
-            admissionDate: '2025-10-28',
-        }
-    },
-    contact_info: {
-        parent_guardian: { name: 'Sanjay dutt Sharma', phone: '555-123-4567', email: 'sanjay.sharma@example.com' },
-        emergency_contact: { name: 'Meenakshi Sharma', phone: '555-987-6543' }
-    }
-};
 
 export const mockStaff: StaffMember[] = [
     { id: 'st1', staffId: 'T-001', fullName: 'John Davis', role: StaffRole.Principal, email: 'j.davis@school.edu', phone: '555-0101', joiningDate: '2010-08-15', status: 'Active' },
@@ -392,4 +372,25 @@ export const mockParentMessages: ParentMessage[] = [
             { id: 'c4', sender: 'school', text: 'Thank you for letting us know. We have marked him as excused. We hope he feels better soon!', timestamp: '2024-10-24T08:16:00Z' },
         ],
     },
+];
+
+export const mockVehicles: Vehicle[] = [
+    { id: 'v1', vehicleNumber: 'BUS-001', model: 'Tata Marcopolo', capacity: 40, status: 'Active', nextServiceDate: '2025-12-01', driverName: 'Suresh Kumar' },
+    { id: 'v2', vehicleNumber: 'BUS-002', model: 'Ashok Leyland', capacity: 40, status: 'Active', nextServiceDate: '2026-02-15', driverName: 'Ramesh Singh' },
+    { id: 'v3', vehicleNumber: 'VAN-001', model: 'Force Traveller', capacity: 15, status: 'Under Maintenance', nextServiceDate: '2025-11-10', driverName: 'Amit Patel' },
+];
+
+export const mockRouteStops: RouteStop[] = [
+    { id: 's1', name: 'Greenwood Park', pickupTime: '07:10 AM', dropoffTime: '04:50 PM', assignedStudents: [{id: '1', name: 'Alice Johnson'}] },
+    { id: 's2', name: 'Oak Street Corner', pickupTime: '07:25 AM', dropoffTime: '04:35 PM', assignedStudents: [{id: '2', name: 'Alex Johnson'}] },
+    { id: 's3', name: 'Pine Lane Plaza', pickupTime: '07:40 AM', dropoffTime: '04:20 PM', assignedStudents: [{id: '3', name: 'Charlie Brown'}] },
+];
+
+export const mockRoutes: BusRoute[] = [
+    { id: 'r1', routeName: 'North Route', routeNumber: 'A1', vehicleId: 'v1', stops: [mockRouteStops[0], mockRouteStops[1]] },
+    { id: 'r2', routeName: 'South Route', routeNumber: 'B2', vehicleId: 'v2', stops: [mockRouteStops[2]] },
+];
+
+export const mockTransportAlerts: TransportAlert[] = [
+    { id: 'a1', routeId: 'r1', message: 'Route A1 is running 15 minutes late due to traffic.', timestamp: new Date().toISOString(), severity: 'Warning' },
 ];

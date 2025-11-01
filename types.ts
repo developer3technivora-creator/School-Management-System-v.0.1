@@ -382,3 +382,38 @@ export interface Meeting {
     attendees: Attendee[];
     agenda?: string;
 }
+
+// TRANSPORT MANAGEMENT TYPES
+export interface Vehicle {
+    id: string;
+    vehicleNumber: string;
+    model: string;
+    capacity: number;
+    status: 'Active' | 'Under Maintenance' | 'Inactive';
+    nextServiceDate: string;
+    driverName: string; 
+}
+
+export interface RouteStop {
+    id: string;
+    name: string;
+    pickupTime: string;
+    dropoffTime: string;
+    assignedStudents: { id: string; name: string }[];
+}
+
+export interface BusRoute {
+    id: string;
+    routeName: string;
+    routeNumber: string;
+    vehicleId: string;
+    stops: RouteStop[];
+}
+
+export interface TransportAlert {
+    id: string;
+    routeId: string;
+    message: string;
+    timestamp: string;
+    severity: 'Info' | 'Warning' | 'Critical';
+}

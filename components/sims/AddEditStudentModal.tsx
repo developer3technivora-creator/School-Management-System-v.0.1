@@ -134,6 +134,8 @@ export const AddEditStudentModal: React.FC<AddEditStudentModalProps> = ({ isOpen
                 academic_info: {
                     grade: formData.grade,
                     enrollment_status: formData.enrollment_status,
+                    // FIX: Preserve existing admission status when editing
+                    admission_status: student?.academic_info.admission_status,
                 },
                 contact_info: {
                     parent_guardian: {
@@ -253,7 +255,7 @@ export const AddEditStudentModal: React.FC<AddEditStudentModalProps> = ({ isOpen
                         <div className="flex items-center justify-end p-4 md:p-5 border-t border-slate-200 rounded-b dark:border-slate-600 mt-4 -mx-5 -mb-5">
                             <button type="button" onClick={onClose} className="px-5 py-2.5 text-sm font-medium text-slate-900 focus:outline-none bg-white rounded-lg border border-slate-200 hover:bg-slate-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-slate-100 dark:focus:ring-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600 dark:hover:text-white dark:hover:bg-slate-700">Cancel</button>
                             <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ml-3">
-                                {student ? 'Save Changes' : 'Create Student'}
+                                {student ? 'Save Changes' : 'Add Student'}
                             </button>
                         </div>
                     </form>
@@ -263,34 +265,21 @@ export const AddEditStudentModal: React.FC<AddEditStudentModalProps> = ({ isOpen
     );
 };
 
-// Reusable form field components
-const InputField: React.FC<{ name: string; label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; type?: string; error?: string; disabled?: boolean; }> = ({ name, label, value, onChange, type = 'text', error, disabled = false }) => (
+// FIX: Added reusable form field components that were missing.
+const InputField: React.FC<{ name: string; label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; type?: string; disabled?: boolean; error?: string; }> = ({ name, label, value, onChange, type = 'text', disabled = false, error }) => (
     <div>
         <label htmlFor={name} className="block mb-2 text-sm font-medium text-slate-900 dark:text-white">{label}</label>
-        <input
-            type={type}
-            name={name}
-            id={name}
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            className={`bg-slate-50 border ${error ? 'border-red-500' : 'border-slate-300'} text-slate-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-slate-600 dark:border-slate-500 dark:placeholder-slate-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 disabled:opacity-70 disabled:bg-slate-200 dark:disabled:bg-slate-700/50`}
-        />
+        <input type={type} name={name} id={name} value={value} onChange={onChange} disabled={disabled} className={`bg-slate-50 border ${error ? 'border-red-500' : 'border-slate-300'} text-slate-900 text-sm rounded-lg block w-full p-2.5 dark:bg-slate-600 dark:border-slate-500 dark:text-white disabled:opacity-60`} />
         {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
 );
 
-const SelectField: React.FC<{ name: string; label: string; value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; options: string[] }> = ({ name, label, value, onChange, options }) => (
+const SelectField: React.FC<{ name: string; label: string; value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; options: string[]; error?: string; }> = ({ name, label, value, onChange, options, error }) => (
     <div>
         <label htmlFor={name} className="block mb-2 text-sm font-medium text-slate-900 dark:text-white">{label}</label>
-        <select
-            name={name}
-            id={name}
-            value={value}
-            onChange={onChange}
-            className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-slate-600 dark:border-slate-500 dark:placeholder-slate-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-        >
+        <select name={name} id={name} value={value} onChange={onChange} className={`bg-slate-50 border ${error ? 'border-red-500' : 'border-slate-300'} text-slate-900 text-sm rounded-lg block w-full p-2.5 dark:bg-slate-600 dark:border-slate-500 dark:text-white`}>
             {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
+        {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
     </div>
 );

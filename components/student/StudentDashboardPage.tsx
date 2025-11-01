@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import type { User, Role, Student, ChildProfile, GuardianProfile } from '../../types';
-import { Role as RoleEnum } from '../../types';
-import { supabase } from '../../services/supabase';
+import React, { useState, useEffect } from 'react';
+import type { User, Role, Student } from '../../types';
 import { 
     ArrowLeftOnRectangleIcon, 
     ChartPieIcon,
@@ -20,7 +18,7 @@ import {
     MegaphoneIcon,
     UserGroupIcon,
 } from '../Icons';
-import { rishabhSharma } from '../../data/mockData';
+import { mockStudents } from '../../data/mockData';
 
 
 import { StudentDashboardOverviewTab } from './StudentDashboardOverviewTab';
@@ -46,10 +44,7 @@ const NavItem: React.FC<{
         <li>
             <a
                 href="#"
-                onClick={(e) => {
-                    e.preventDefault();
-                    setView(viewName);
-                }}
+                onClick={(e) => { e.preventDefault(); setView(viewName); }}
                 className={`flex items-center p-3 text-base font-medium rounded-lg transition-colors duration-200 group ${
                     isActive
                         ? 'bg-blue-600 text-white shadow-lg'
@@ -76,95 +71,38 @@ export const StudentDashboardPage: React.FC<StudentDashboardPageProps> = ({ user
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
     const [allChildren, setAllChildren] = useState<Student[]>([]);
-    const [currentStudent, setCurrentStudent] = useState<Student | null>(studentProfile || rishabhSharma);
-    const [isParentView, setIsParentView] = useState(!!studentProfile);
-    const [isLoadingChildren, setIsLoadingChildren] = useState(!!studentProfile);
+    const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
+    const isParentView = !!studentProfile;
+    const [isLoadingChildren, setIsLoadingChildren] = useState(true);
 
+    // FIX: Replaced Supabase data fetching with mock data to ensure consistency across the Parent Portal, resolving data mismatches.
     useEffect(() => {
+        setIsLoadingChildren(true);
         if (isParentView && studentProfile) {
-            const fetchChildrenForParent = async () => {
-                setIsLoadingChildren(true);
-                try {
-                    const { data: primaryGuardianData, error: parentError } = await supabase
-                        .from('guardian_profile')
-                        .select('*')
-                        .eq('user_id', user.id)
-                        .eq('is_primary', true)
-                        .single();
-
-                    if (parentError) throw parentError;
-                    
-                    const { data: childrenData, error: childrenError } = await supabase
-                        .from('child_profile')
-                        .select('*')
-                        .eq('user_id', user.id);
-
-                    if (childrenError) throw childrenError;
-                    
-                    const admissionPromises = (childrenData || []).map(async (child) => {
-                        const { data: admissionData, error: admissionError } = await supabase
-                            .from('school_students')
-                            .select('school_id, student_unique_id, added_date')
-                            .eq('student_id', child.id)
-                            .maybeSingle();
-
-                        if (admissionError) return { ...child, admissionStatus: null };
-                        
-                        if (admissionData) {
-                            const { data: schoolData, error: schoolError } = await supabase
-                                .from('schools')
-                                .select('name')
-                                .eq('id', admissionData.school_id)
-                                .single();
-
-                            if (schoolError) return { ...child, admissionStatus: null };
-
-                            return {
-                                ...child,
-                                admissionStatus: {
-                                    schoolName: schoolData.name,
-                                    studentId: admissionData.student_unique_id,
-                                    admissionDate: admissionData.added_date,
-                                }
-                            };
-                        }
-                        return { ...child, admissionStatus: null };
-                    });
-
-                    const childrenWithStatus = await Promise.all(admissionPromises);
-
-                    const studentList: Student[] = childrenWithStatus.map(child => ({
-                        id: child.id,
-                        student_id: child.admissionStatus?.studentId || 'N/A',
-                        personal_info: {
-                            full_name: child.full_name,
-                            date_of_birth: child.age ? new Date(new Date().setFullYear(new Date().getFullYear() - Number(child.age))).toISOString().split('T')[0] : 'N/A',
-                            gender: child.gender,
-                            address: primaryGuardianData.address,
-                        },
-                        academic_info: {
-                            grade: child.grade,
-                            enrollment_status: child.admissionStatus ? 'Enrolled' : 'Pending',
-                            admission_status: child.admissionStatus,
-                        },
-                        contact_info: {
-                            parent_guardian: { name: primaryGuardianData.full_name, phone: primaryGuardianData.phone, email: primaryGuardianData.email || '' },
-                            emergency_contact: { name: primaryGuardianData.full_name, phone: primaryGuardianData.phone }
-                        },
-                    }));
-
-                    setAllChildren(studentList);
-                    const initiallySelected = studentList.find(s => s.id === studentProfile.id);
-                    setCurrentStudent(initiallySelected || studentList[0] || null);
-                } catch (error) {
-                    console.error("Failed to fetch children for parent view:", error);
-                } finally {
-                    setIsLoadingChildren(false);
+            // Parent is viewing a specific student's portal.
+            const parentEmail = studentProfile.contact_info.parent_guardian.email;
+            // Find siblings from mock data to populate switcher.
+            const siblings = mockStudents.filter(s => s.contact_info.parent_guardian.email === parentEmail);
+            setAllChildren(siblings);
+            setCurrentStudent(studentProfile);
+        } else {
+            // A student is logged in directly.
+            // Find the student's profile from mock data. This logic assumes a student's auth email matches a parent email in mock data, which is a simplification for this mock environment.
+            const loggedInStudent = mockStudents.find(s => s.contact_info.parent_guardian.email === user.email);
+            if (loggedInStudent) {
+                setCurrentStudent(loggedInStudent);
+                // A student viewing their own portal doesn't need to switch between siblings.
+                setAllChildren([loggedInStudent]);
+            } else {
+                // Fallback to prevent a blank screen if no match is found.
+                setCurrentStudent(mockStudents[0] || null);
+                if (mockStudents[0]) {
+                    setAllChildren([mockStudents[0]]);
                 }
-            };
-            fetchChildrenForParent();
+            }
         }
-    }, [isParentView, user, studentProfile]);
+        setIsLoadingChildren(false);
+    }, [user.email, studentProfile, isParentView]);
     
     const handleChildSwitch = (studentId: string) => {
         const newStudent = allChildren.find(s => s.id === studentId);
@@ -202,7 +140,18 @@ export const StudentDashboardPage: React.FC<StudentDashboardPageProps> = ({ user
         }
 
         if (!currentStudent) {
-            return <div className="p-8 text-center text-slate-500">No student profile loaded.</div>
+             return (
+               <div className="p-8 text-center bg-white dark:bg-slate-800 rounded-lg">
+                    <AcademicCapIcon className="mx-auto h-12 w-12 text-slate-400" />
+                    <h2 className="mt-4 text-2xl font-bold text-slate-800 dark:text-slate-200">No Admitted Students Found</h2>
+                    <p className="mt-2 text-slate-500">
+                        It looks like there are no student profiles linked to your account that are currently admitted to a school.
+                    </p>
+                    <p className="mt-1 text-slate-500">
+                        Please add a child to your profile and complete the admission process with a school.
+                    </p>
+                </div>
+            );
         }
 
         switch (currentView) {
@@ -289,13 +238,13 @@ export const StudentDashboardPage: React.FC<StudentDashboardPageProps> = ({ user
                         <button className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><BellIcon className="w-5 h-5"/></button>
                         <div className="relative">
                             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex items-center gap-2">
-                                <img className="h-9 w-9 rounded-full object-cover" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=2080&auto=format&fit=crop" alt="User" />
+                                <img className="h-9 w-9 rounded-full object-cover" src={`https://api.dicebear.com/8.x/initials/svg?seed=${user.user_metadata?.fullName || user.email}`} alt="User" />
                                 <span className="text-sm font-medium text-slate-700 dark:text-slate-200 hidden sm:inline">{user.user_metadata?.fullName}</span>
                                 <ChevronDownIcon className="w-4 h-4 text-slate-500"/>
                             </button>
-                            {isMenuOpen && (
+                             {isMenuOpen && (
                                 <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-md shadow-xl z-10 border dark:border-slate-700">
-                                    <a href="#" onClick={(e) => { e.preventDefault(); onBackToRoles(); }} className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">{isParentView ? 'Exit Student View' : 'Change Role'}</a>
+                                    <a href="#" onClick={(e) => { e.preventDefault(); onBackToRoles(); }} className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">{studentProfile ? 'Exit Student View' : 'Change Role'}</a>
                                     <a href="#" onClick={(e) => { e.preventDefault(); onLogout(); }} className="block px-4 py-2 text-sm text-red-500 hover:bg-slate-100 dark:hover:bg-slate-700">Logout</a>
                                 </div>
                             )}

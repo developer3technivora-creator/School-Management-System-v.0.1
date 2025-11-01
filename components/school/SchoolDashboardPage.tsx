@@ -25,7 +25,7 @@ import {
     SparklesIcon
 } from '../Icons';
 import { SchoolProfileTab } from './SchoolProfileTab';
-import { CodeLookupTab } from '../administration/CodeLookupTab';
+import { CodeLookupTab } from './CodeLookupTab';
 import { AdmittedStudentsTab } from './AdmittedStudentsTab';
 import { SchoolRegistrationPage } from './SchoolRegistrationPage';
 import { SchoolDashboardOverviewTab } from './SchoolDashboardOverviewTab';
@@ -64,13 +64,15 @@ const NavItem: React.FC<{
                     e.preventDefault();
                     setView(viewName);
                 }}
-                className={`flex items-center p-3 text-base font-semibold rounded-lg transition-all duration-300 group ${
+                className={`flex items-center p-3 text-base rounded-lg transition-all duration-200 group ${
                     isActive
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                        ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300 font-bold'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 font-medium'
                 }`}
             >
-                {icon}
+                 <span className={`transition-colors duration-200 ${isActive ? 'text-blue-500' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-200'}`}>
+                    {icon}
+                </span>
                 <span className="ml-3 flex-1 whitespace-nowrap">{children}</span>
             </a>
         </li>
@@ -195,7 +197,7 @@ export const SchoolDashboardPage: React.FC<SchoolDashboardPageProps> = ({ user, 
                 case 'admissions': return <CodeLookupTab school={school!} />;
                 case 'students': return <AdmittedStudentsTab school={school!} />;
                 case 'faculty': return <FacultyManagementPage onBackToDashboard={() => setCurrentView('dashboard')} />;
-                case 'attendance': return <AttendanceManagementPage onBackToDashboard={() => setCurrentView('dashboard')} />;
+                case 'attendance': return <AttendanceManagementPage school={school!} onBackToDashboard={() => setCurrentView('dashboard')} />;
                 case 'finance': return <FinancialManagementPage onBackToDashboard={() => setCurrentView('dashboard')} />;
                 case 'courses': return <CourseManagementPage onBackToDashboard={() => setCurrentView('dashboard')} />;
                 case 'meetings': return <MeetingManagementPage onBackToDashboard={() => setCurrentView('dashboard')} />;
@@ -245,8 +247,8 @@ export const SchoolDashboardPage: React.FC<SchoolDashboardPageProps> = ({ user, 
     }
 
     return (
-        <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-            <aside className="w-64 flex-shrink-0 bg-white dark:bg-slate-900 p-4 flex flex-col justify-between border-r border-slate-200 dark:border-slate-800">
+        <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900">
+            <aside className="w-64 flex-shrink-0 bg-white dark:bg-slate-800 p-4 flex flex-col justify-between border-r border-slate-200 dark:border-slate-700">
                 <div>
                     <div className="flex items-center gap-3 px-3 py-2 mb-6">
                         <SparklesIcon className="h-8 w-8 text-blue-500"/>
@@ -260,7 +262,7 @@ export const SchoolDashboardPage: React.FC<SchoolDashboardPageProps> = ({ user, 
                     <ul className="space-y-2 pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
                         {settingsNavItems}
                     </ul>
-                    <div className="mt-6 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <div className="mt-6 p-3 bg-slate-100 dark:bg-slate-700/50 rounded-lg">
                         <div className="flex items-center gap-3">
                             <img className="h-10 w-10 rounded-full object-cover" src={`https://api.dicebear.com/8.x/initials/svg?seed=${user.user_metadata?.fullName || user.email}`} alt="User" />
                             <div>
@@ -273,7 +275,7 @@ export const SchoolDashboardPage: React.FC<SchoolDashboardPageProps> = ({ user, 
             </aside>
 
             <main className="flex-1">
-                 <header className="flex justify-between items-center p-6 sticky top-0 z-30 bg-gray-50/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-800">
+                 <header className="flex justify-between items-center p-6 sticky top-0 z-30 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700">
                     <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                         {currentView.charAt(0).toUpperCase() + currentView.slice(1).replace(/([A-Z])/g, ' $1')}
                     </h1>
@@ -281,7 +283,7 @@ export const SchoolDashboardPage: React.FC<SchoolDashboardPageProps> = ({ user, 
                         <button className="p-2.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors"><BellIcon className="w-6 h-6"/></button>
                         <button className="p-2.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors"><ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6"/></button>
                         <div ref={menuRef} className="relative">
-                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex items-center gap-2 p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex items-center gap-2 p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                 <img className="h-9 w-9 rounded-full object-cover" src={`https://api.dicebear.com/8.x/initials/svg?seed=${user.user_metadata?.fullName || user.email}`} alt="User" />
                                 <ChevronDownIcon className="w-4 h-4 text-slate-500"/>
                             </button>

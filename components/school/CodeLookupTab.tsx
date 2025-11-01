@@ -129,15 +129,15 @@ export const CodeLookupTab: React.FC<CodeLookupTabProps> = ({ school }) => {
         setError(null);
 
         try {
-            const { data: existingStudents, error: countError } = await supabase
+            const { count, error: countError } = await supabase
                 .from('school_students')
-                .select('id', { count: 'exact' })
+                .select('*', { count: 'exact', head: true })
                 .eq('school_id', school.id)
                 .like('student_unique_id', `${school.code}-${new Date().getFullYear()}-%`);
 
             if (countError) throw countError;
 
-            const nextId = (existingStudents?.length || 0) + 1;
+            const nextId = (count || 0) + 1;
             const uniqueId = `${school.code}-${new Date().getFullYear()}-${String(nextId).padStart(4, '0')}`;
             
             const { error: insertError } = await supabase.from('school_students').insert({

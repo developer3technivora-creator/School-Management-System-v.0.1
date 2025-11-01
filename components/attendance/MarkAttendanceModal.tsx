@@ -5,7 +5,7 @@ import { UserCircleIcon } from '../Icons';
 interface MarkAttendanceModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (records: Omit<AttendanceRecord, 'id'>[]) => void;
+    onSave: (records: Omit<AttendanceRecord, 'id'>[]) => Promise<boolean>;
     students: Student[];
     date: string;
     existingRecords: AttendanceRecord[];
@@ -17,20 +17,21 @@ type StatusMap = {
 
 const statusOptions: AttendanceStatus[] = ['Present', 'Absent', 'Late', 'Excused'];
 const statusStyles: Record<AttendanceStatus, string> = {
-    'Present': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-    'Absent': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-    'Late': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-    'Excused': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+    'Present': 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300',
+    'Absent': 'bg-red-100 text-red-800 dark:bg-red-800/30 dark:text-red-300',
+    'Late': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/30 dark:text-yellow-300',
+    'Excused': 'bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-300',
 }
 const activeStatusStyles: Record<AttendanceStatus, string> = {
-    'Present': 'bg-green-600 text-white',
-    'Absent': 'bg-red-600 text-white',
-    'Late': 'bg-yellow-500 text-white',
-    'Excused': 'bg-blue-600 text-white',
+    'Present': 'bg-green-600 text-white shadow-md',
+    'Absent': 'bg-red-600 text-white shadow-md',
+    'Late': 'bg-yellow-500 text-white shadow-md',
+    'Excused': 'bg-blue-600 text-white shadow-md',
 }
 
 export const MarkAttendanceModal: React.FC<MarkAttendanceModalProps> = ({ isOpen, onClose, onSave, students, date, existingRecords }) => {
     const [statuses, setStatuses] = useState<StatusMap>({});
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         const initialStatuses: StatusMap = {};
@@ -42,6 +43,7 @@ export const MarkAttendanceModal: React.FC<MarkAttendanceModalProps> = ({ isOpen
             };
         });
         setStatuses(initialStatuses);
+        setIsSaving(false);
     }, [isOpen, students, existingRecords]);
 
     const handleStatusChange = (studentId: string, status: AttendanceStatus) => {
@@ -66,14 +68,22 @@ export const MarkAttendanceModal: React.FC<MarkAttendanceModalProps> = ({ isOpen
         setStatuses(newStatuses);
     };
 
-    const handleSubmit = () => {
-        const recordsToSave: Omit<AttendanceRecord, 'id'>[] = Object.entries(statuses).map(([studentId, data]) => ({
+    const handleSubmit = async () => {
+        setIsSaving(true);
+        const recordsToSave: Omit<AttendanceRecord, 'id'>[] = Object.keys(statuses).map((studentId) => ({
             studentId,
             date,
-            status: data.status,
-            notes: data.notes,
+            status: statuses[studentId].status,
+            notes: statuses[studentId].notes,
         }));
-        onSave(recordsToSave);
+        
+        const success = await onSave(recordsToSave);
+
+        if (!success) {
+            // The parent component shows an error. We just need to reset the button.
+            setIsSaving(false);
+        }
+        // On success, the parent component closes the modal.
     };
 
     if (!isOpen) return null;
@@ -95,38 +105,40 @@ export const MarkAttendanceModal: React.FC<MarkAttendanceModalProps> = ({ isOpen
                         </button>
                     </div>
 
-                    <div className="p-4 md:p-5 overflow-y-auto flex-grow space-y-4">
+                    <div className="p-4 md:p-5 overflow-y-auto flex-grow space-y-3">
                         <div className="flex justify-end">
                             <button onClick={handleMarkAllPresent} className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg">Mark All Present</button>
                         </div>
                         {students.map(student => (
-                            <div key={student.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700">
-                                <div className="flex items-center gap-3 col-span-1">
-                                    <UserCircleIcon className="w-10 h-10 text-slate-400" />
-                                    <div>
-                                        <p className="font-semibold text-slate-800 dark:text-slate-100">{student.personal_info.full_name}</p>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">{student.student_id}</p>
+                            <div key={student.id} className="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                                    <div className="lg:col-span-4 flex items-center gap-3">
+                                        <UserCircleIcon className="w-10 h-10 text-slate-400 flex-shrink-0" />
+                                        <div className="overflow-hidden">
+                                            <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">{student.personal_info.full_name}</p>
+                                            <p className="text-sm text-slate-500 dark:text-slate-400 font-mono">{student.student_id}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex items-center gap-2 col-span-2">
-                                    <div className="flex-grow flex flex-wrap gap-2">
-                                    {statusOptions.map(status => (
-                                        <button 
-                                            key={status}
-                                            onClick={() => handleStatusChange(student.id, status)}
-                                            className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${statuses[student.id]?.status === status ? activeStatusStyles[status] : statusStyles[status]}`}
-                                        >
-                                            {status}
-                                        </button>
-                                    ))}
+                                    <div className="lg:col-span-8 flex flex-col md:flex-row items-center gap-3">
+                                        <div className="flex flex-wrap gap-2 justify-start flex-shrink-0">
+                                            {statusOptions.map(status => (
+                                                <button 
+                                                    key={status}
+                                                    onClick={() => handleStatusChange(student.id, status)}
+                                                    className={`px-3 py-1.5 text-xs font-bold rounded-full transition-all duration-200 transform hover:scale-105 ${statuses[student.id]?.status === status ? activeStatusStyles[status] : statusStyles[status]}`}
+                                                >
+                                                    {status}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <input 
+                                            type="text"
+                                            placeholder="Notes (e.g., reason for absence)"
+                                            value={statuses[student.id]?.notes || ''}
+                                            onChange={(e) => handleNotesChange(student.id, e.target.value)}
+                                            className="w-full flex-grow bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-sm rounded-lg p-2"
+                                        />
                                     </div>
-                                    <input 
-                                        type="text"
-                                        placeholder="Optional notes..."
-                                        value={statuses[student.id]?.notes || ''}
-                                        onChange={(e) => handleNotesChange(student.id, e.target.value)}
-                                        className="w-full md:w-40 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-sm rounded-lg p-2"
-                                    />
                                 </div>
                             </div>
                         ))}
@@ -136,8 +148,8 @@ export const MarkAttendanceModal: React.FC<MarkAttendanceModalProps> = ({ isOpen
                         <button onClick={onClose} type="button" className="px-5 py-2.5 text-sm font-medium text-slate-900 focus:outline-none bg-white rounded-lg border border-slate-200 hover:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-600 dark:hover:bg-slate-700">
                             Cancel
                         </button>
-                        <button onClick={handleSubmit} type="button" className="ml-3 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">
-                            Save Attendance
+                        <button onClick={handleSubmit} type="button" disabled={isSaving} className="ml-3 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:bg-blue-400 disabled:cursor-not-allowed w-32 text-center">
+                            {isSaving ? 'Saving...' : 'Save Attendance'}
                         </button>
                     </div>
                 </div>
